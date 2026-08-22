@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_input.notebook_path // empty' | { read -r f; [ -n \"$f\" ] && [ -f \"$f\" ] || exit 0; case \"$f\" in *.ts|*.tsx|*.js|*.jsx|*.json|*.css|*.md) pnpm exec prettier --write --ignore-unknown \"$f\" >/dev/null 2>&1;; esac; case \"$f\" in *.ts|*.tsx|*.js|*.jsx) pnpm exec eslint --fix --no-warn-ignored \"$f\" >/dev/null 2>&1;; esac; } || true",
+            "timeout": 30,
+            "statusMessage": "Formateando y aplicando lint..."
+          }
+        ]
+      }
+    ]
+  }
+}
