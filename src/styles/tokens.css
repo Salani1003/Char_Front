@@ -1,0 +1,249 @@
+/**
+ * Char design tokens — source of truth for color, radius, spacing, typography,
+ * elevation and motion. Ported from `src/references/Char - Sistema comercial UI/tokens/`
+ * (the Char brand reference kit). Components must consume these tokens (directly,
+ * or via the Tailwind `@theme` bridge in `src/index.css`) instead of hardcoding
+ * colors/spacing on screens.
+ *
+ * To change the Char palette, edit this file only — never a screen or component.
+ */
+
+:root {
+  /* ---------------------------------------------------------------------
+   * Color — base ramps
+   * ------------------------------------------------------------------- */
+  --char-cream-50: #fffdfa;
+  --char-cream-100: #f6f2ec;
+  --char-cream-200: #f0ebe1;
+  --char-cream-300: #efe9de;
+  --char-cream-400: #e8e1d4;
+  --char-cream-500: #ddd5c6;
+  --char-cream-600: #dcd6c9;
+
+  --char-slate-900: #2b3138;
+  --char-slate-800: #2f3742;
+  --char-slate-700: #3a4149;
+  --char-slate-600: #5b6472;
+  --char-slate-500: #6b7076;
+  --char-slate-400: #8a8f96;
+  --char-slate-350: #8f959c;
+  --char-slate-300: #a3a99e;
+  --char-slate-250: #a7acb2;
+  --char-slate-200: #c3c8cd;
+  --char-slate-150: #5f6670;
+  --char-slate-inverse: #e8e5dc;
+
+  --char-accent: #3f6570;
+  --char-accent-link: #3f6570;
+  --char-accent-link-hover: #2f4d56;
+  --char-accent-tint-10: color-mix(in oklch, var(--char-accent) 10%, #fffdfa);
+  --char-accent-tint-14: color-mix(
+    in oklch,
+    var(--char-accent) 14%,
+    transparent
+  );
+  --char-accent-tint-16: color-mix(
+    in oklch,
+    var(--char-accent) 16%,
+    transparent
+  );
+  --char-accent-tint-22: color-mix(
+    in oklch,
+    var(--char-accent) 22%,
+    transparent
+  );
+  --char-brand-gold: #d9c9a3;
+  --char-brand-gold-soft: #f0e6d2;
+
+  --char-success: #3f7a52;
+  --char-success-bg: rgba(63, 122, 82, 0.12);
+  --char-warning: #96701f;
+  --char-warning-bg: rgba(197, 146, 45, 0.14);
+  --char-danger: #b5522f;
+  --char-danger-bg: rgba(181, 82, 47, 0.12);
+  --char-danger-bg-soft: rgba(181, 82, 47, 0.09);
+  --char-info: #3660c9;
+  --char-info-bg: rgba(54, 96, 201, 0.1);
+  --char-neutral-bg: rgba(138, 143, 150, 0.14);
+
+  /* ---------------------------------------------------------------------
+   * Color — semantic roles (what components/screens should reference)
+   * ------------------------------------------------------------------- */
+  --surface-app: var(--char-cream-100);
+  --surface-card: var(--char-cream-50);
+  --surface-raised: var(--char-cream-50);
+  --surface-subtle: var(--char-cream-100);
+  --surface-hover: var(--char-cream-200);
+  --surface-sidebar: var(--char-slate-900);
+  --surface-disabled: var(--char-cream-100);
+
+  --border-default: var(--char-cream-400);
+  --border-soft: var(--char-cream-200);
+  --border-divider: var(--char-cream-300);
+  --border-dashed: var(--char-cream-500);
+  --border-sidebar: var(--char-slate-700);
+
+  --text-heading: var(--char-slate-800);
+  --text-body: var(--char-slate-800);
+  --text-secondary: var(--char-slate-600);
+  --text-muted: var(--char-slate-500);
+  --text-subtle: var(--char-slate-400);
+  --text-faint: var(--char-slate-300);
+  --text-disabled: var(--char-slate-200);
+  --text-on-accent: var(--char-cream-50);
+  --text-sidebar-idle: var(--char-slate-250);
+  --text-sidebar-hover: var(--char-slate-inverse);
+  --text-sidebar-dim: var(--char-slate-150);
+  --text-sidebar-strong: var(--char-cream-100);
+  --text-link: var(--char-accent-link);
+  --text-link-hover: var(--char-accent-link-hover);
+
+  --accent: var(--char-accent);
+  --accent-surface: var(--char-accent-tint-16);
+  --accent-surface-hover: var(--char-accent-tint-22);
+
+  /* ---------------------------------------------------------------------
+   * Radius
+   * ------------------------------------------------------------------- */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 9px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 14px;
+  --radius-pill: 20px;
+  --radius-round: 50%;
+
+  /* Role aliases (rounded-control, rounded-card, ...) are registered as
+     Tailwind utilities in the `@theme inline` block in src/index.css,
+     referencing the base scale above — not redeclared here to avoid
+     circular custom-property references. */
+
+  /* ---------------------------------------------------------------------
+   * Spacing & layout metrics
+   * ------------------------------------------------------------------- */
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-5: 10px;
+  --space-6: 12px;
+  --space-7: 14px;
+  --space-8: 16px;
+  --space-9: 18px;
+  --space-10: 20px;
+  --space-11: 22px;
+  --space-12: 24px;
+  --space-13: 26px;
+  --space-14: 28px;
+  --space-16: 32px;
+  --space-18: 40px;
+  --space-20: 44px;
+  --space-24: 56px;
+
+  --gutter-mobile: 18px;
+  --gutter-tablet: 24px;
+  --gutter-desktop: 32px;
+
+  --pad-card: 24px;
+  --pad-card-tight: 20px;
+  --pad-table-cell-y: 14px;
+  --pad-table-cell-y-compact: 9px;
+  --pad-table-cell-x: 16px;
+  --pad-control-y: 11px;
+  --pad-control-x: 18px;
+
+  --sidebar-width: 240px;
+  --sidebar-width-rail: 76px;
+  --sidebar-width-mobile: 270px;
+  --header-height: 72px;
+  --header-height-mobile: 64px;
+  --drawer-width: 420px;
+  --control-height: 44px;
+  --control-height-lg: 46px;
+  --control-height-auth: 48px;
+  --icon-button-size: 36px;
+  --touch-target: 44px;
+  --table-min-width: 720px;
+
+  /* ---------------------------------------------------------------------
+   * Typography
+   *
+   * Prefixed `--char-text-*` / `--char-leading-*` (NOT `--text-*` /
+   * `--leading-*`) — Tailwind v4 reserves those exact namespaces for its own
+   * font-size and line-height utility scales (text-sm, text-lg, text-4xl,
+   * leading-snug, ...). Reusing those names here would silently override
+   * Tailwind's scale for the whole app instead of adding a new one.
+   * ------------------------------------------------------------------- */
+  --char-text-2xs: 10px;
+  --char-text-xs: 11px;
+  --char-text-xs-plus: 11.5px;
+  --char-text-sm: 12px;
+  --char-text-sm-plus: 12.5px;
+  --char-text-base: 13px;
+  --char-text-base-plus: 13.5px;
+  --char-text-md: 14px;
+  --char-text-md-plus: 14.5px;
+  --char-text-lg: 15px;
+  --char-text-xl: 18px;
+  --char-text-2xl: 19px;
+  --char-text-3xl: 21px;
+  --char-text-4xl: 22px;
+  --char-text-5xl: 24px;
+  --char-text-6xl: 26px;
+  --char-text-7xl: 34px;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --char-leading-tight: 1.1;
+  --char-leading-snug: 1.2;
+  --char-leading-normal: 1.45;
+  --char-leading-relaxed: 1.6;
+
+  --tracking-eyebrow: 0.04em;
+  --tracking-nav-group: 0.06em;
+  --tracking-brand: 0.05em;
+
+  /* ---------------------------------------------------------------------
+   * Elevation
+   * ------------------------------------------------------------------- */
+  --shadow-none: none;
+  --shadow-dropdown: 0 12px 28px rgba(43, 49, 56, 0.14);
+  --shadow-drawer: -8px 0 24px rgba(43, 49, 56, 0.12);
+  --shadow-nav-mobile: 8px 0 28px rgba(43, 49, 56, 0.22);
+
+  --overlay-scrim: rgba(43, 49, 56, 0.35);
+  --overlay-scrim-strong: rgba(43, 49, 56, 0.45);
+
+  --hover-tint-light: rgba(255, 255, 255, 0.055);
+  --hover-tint-light-strong: rgba(255, 255, 255, 0.07);
+
+  /* ---------------------------------------------------------------------
+   * Motion
+   * ------------------------------------------------------------------- */
+  --ease-standard: ease;
+  --duration-fast: 0.15s;
+  --duration-base: 0.18s;
+  --duration-slow: 0.22s;
+  --duration-slower: 0.24s;
+  --duration-slowest: 0.26s;
+}
+
+/* Char does not define a dark palette yet. This keeps `.dark` usable (base-ui/
+   shadcn primitives toggle off it) without diverging from the brand tokens
+   above until a real dark ramp is designed. */
+.dark {
+  --surface-app: var(--char-slate-900);
+  --surface-card: var(--char-slate-800);
+  --surface-raised: var(--char-slate-800);
+  --surface-subtle: var(--char-slate-700);
+  --surface-hover: var(--char-slate-700);
+  --border-default: var(--char-slate-700);
+  --text-heading: var(--char-cream-100);
+  --text-body: var(--char-cream-100);
+  --text-secondary: var(--char-slate-250);
+  --text-muted: var(--char-slate-300);
+}

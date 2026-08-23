@@ -1,13 +1,12 @@
 import type { FieldValues, UseControllerProps } from "react-hook-form";
 import { useController } from "react-hook-form";
-
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/char/input";
+import { Label } from "@/components/char/label";
 import { cn } from "@/lib/utils";
-
 /**
- * Campo de formulario controlado por react-hook-form, compuesto por `Label` + `Input`.
- * Muestra el mensaje de error asociado al campo cuando la validación falla.
+ * Campo de formulario controlado por react-hook-form, compuesto por `Label` +
+ * `Input` de Char. Muestra el mensaje de error asociado al campo cuando la
+ * validación falla.
  *
  * @param label Texto mostrado sobre el input.
  * @param name Nombre del campo dentro del formulario (debe coincidir con el schema/defaultValues).
@@ -31,7 +30,6 @@ export function FormInput<TFieldValues extends FieldValues>({
     field,
     fieldState: { error },
   } = useController({ name, control, rules, defaultValue });
-
   return (
     <div className="flex w-full flex-col gap-1.5">
       <Label htmlFor={name}>{label}</Label>
@@ -42,9 +40,7 @@ export function FormInput<TFieldValues extends FieldValues>({
         aria-invalid={!!error}
         className={cn(className)}
       />
-      {error && (
-        <span className="text-xs text-destructive">{error.message}</span>
-      )}
+      {error && <span className="text-xs text-danger">{error.message}</span>}
     </div>
   );
 }

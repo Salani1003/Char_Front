@@ -1,16 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/char/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { FormInput } from "@/customComponents/form/FormInput";
-import { FormPasswordInput } from "@/customComponents/form/FormPasswordInput";
+} from "@/components/char/card";
+import { FormInput } from "@/components/forms/FormInput";
+import { FormPasswordInput } from "@/components/forms/FormPasswordInput";
 const loginSchema = z.object({
   email: z
     .string()
@@ -34,15 +34,13 @@ export const LoginPage = () => {
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
-
   const onSubmit = async (values: LoginFormValues) => {
     console.log(values);
   };
-
   return (
     <Card className="w-full max-w-2xl [--card-spacing:--spacing(10)]">
       <CardHeader className="gap-3">
-        <CardTitle className="font-display text-4xl font-montserrat">
+        <CardTitle className="text-4xl font-montserrat">
           Iniciar sesión
         </CardTitle>
         <CardDescription className="text-lg">

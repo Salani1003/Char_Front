@@ -4,141 +4,129 @@
 @import "@fontsource-variable/geist";
 @import "@fontsource-variable/lora";
 @import "@fontsource-variable/montserrat";
+@import "./styles/tokens.css";
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Tailwind bridge: exposes Char's semantic tokens (src/styles/tokens.css) as
+ * Tailwind utilities (bg-primary, text-foreground, rounded-card, ...). Screens
+ * and components should use these utilities — never hardcode Char's raw hex/
+ * oklch values directly.
+ */
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: "Geist Variable", sans-serif;
   --font-display: "Lora Variable", Georgia, "Times New Roman", serif;
 
-  /* Char brand palette — warm paper neutrals + slate + terracotta accent */
-  --color-char-cream-50: #fffdfa;
-  --color-char-cream-100: #f6f2ec;
-  --color-char-cream-400: #e8e1d4;
-  --color-char-slate-900: #2b3138;
-  --color-char-slate-800: #2f3742;
-  --color-char-slate-700: #3a4149;
-  --color-char-slate-250: #a7acb2;
-  --color-char-accent: oklch(56% 0.13 250);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--foreground);
+  --color-surface-app: var(--surface-app);
+  --color-surface-sidebar: var(--surface-sidebar);
+  --color-sidebar-heading: var(--text-sidebar-strong);
+  --color-sidebar-idle: var(--text-sidebar-idle);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
-  --color-surface-app: var(--color-char-cream-100);
-  --color-surface-card: var(--color-char-cream-50);
-  --color-surface-sidebar: var(--color-char-slate-900);
-  --color-sidebar-border: var(--color-char-slate-700);
-  --color-auth-border: var(--color-char-cream-400);
-  --color-sidebar-heading: var(--color-char-cream-100);
-  --color-sidebar-idle: var(--color-char-slate-250);
-  --color-footnote: var(--color-char-slate-700);
-
-  --radius-card-auth: 14px;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-foreground: var(--foreground);
-  --color-background: var(--background);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Char's base radius scale (xs/sm/md/lg/xl/2xl/pill) already overrides
+     Tailwind's built-in scale via the plain :root declarations in
+     src/styles/tokens.css — no re-registration needed here. These are the
+     semantic role aliases (rounded-card, rounded-control, ...), which are
+     new utility names and do need to be registered in `@theme`. */
+  --radius-control: var(--radius-sm);
+  --radius-input: var(--radius-sm);
+  --radius-input-auth: var(--radius-md);
+  --radius-nav-item: var(--radius-lg);
+  --radius-card: var(--radius-xl);
+  --radius-card-auth: var(--radius-2xl);
+  --radius-badge: var(--radius-pill);
+  --radius-avatar: 50%;
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
+  --background: var(--surface-app);
+  --foreground: var(--text-body);
+  --surface: var(--surface-card);
+  --card: var(--surface-card);
+  --card-foreground: var(--text-body);
+  --popover: var(--surface-card);
+  --popover-foreground: var(--text-body);
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --primary: var(--char-accent);
+  --primary-foreground: var(--text-on-accent);
+  --secondary: var(--char-cream-200);
+  --secondary-foreground: var(--text-body);
+  --accent: var(--accent-surface);
+  --accent-foreground: var(--char-accent);
+  --muted: var(--char-cream-200);
+  --muted-foreground: var(--text-muted);
+
+  --success: var(--char-success);
+  --success-foreground: var(--text-on-accent);
+  --warning: var(--char-warning);
+  --warning-foreground: var(--text-on-accent);
+  --danger: var(--char-danger);
+  --danger-foreground: var(--text-on-accent);
+  --destructive: var(--char-danger);
+  --destructive-foreground: var(--text-on-accent);
+
+  --border: var(--border-default);
+  --input: var(--border-default);
+  --ring: var(--char-accent);
+
+  --chart-1: var(--char-slate-250);
+  --chart-2: var(--char-accent);
+  --chart-3: var(--char-slate-500);
+  --chart-4: var(--char-slate-700);
+  --chart-5: var(--char-brand-gold);
+  --radius: var(--radius-lg);
+
+  --sidebar: var(--surface-sidebar);
+  --sidebar-foreground: var(--text-sidebar-idle);
+  --sidebar-primary: var(--char-accent);
+  --sidebar-primary-foreground: var(--text-on-accent);
+  --sidebar-accent: var(--char-slate-700);
+  --sidebar-accent-foreground: var(--text-sidebar-hover);
+  --sidebar-border: var(--border-sidebar);
+  --sidebar-ring: var(--char-accent);
 }
 
 @layer base {

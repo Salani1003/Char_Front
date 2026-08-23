@@ -9,7 +9,7 @@ import { Outlet } from "react-router";
  */
 const AuthLayout = () => {
   return (
-    <div className="grid min-h-screen w-full bg-surface-app text-char-slate-800 md:grid-cols-2">
+    <div className="grid min-h-screen w-full bg-surface-app text-foreground md:grid-cols-2">
       <div className="hidden flex-col justify-between gap-10 bg-surface-sidebar px-9 py-14 md:flex">
         <div className="flex items-center gap-4">
           <img
@@ -18,10 +18,10 @@ const AuthLayout = () => {
             className="h-16 w-16 rounded-full"
           />
           <div>
-            <p className="font-montserrat text-2xl font-semibold text-sidebar-heading">
+            <p className="font-montserrat text-4xl font-semibold text-sidebar-heading">
               Char Tienda
             </p>
-            <p className="font-sans text-xs tracking-[0.2em] text-sidebar-idle">
+            <p className="font-sans text-lg tracking-[0.2em] text-sidebar-idle">
               GESTIÓN COMERCIAL
             </p>
           </div>
@@ -48,10 +48,10 @@ const AuthLayout = () => {
             className="h-16 w-16 rounded-full"
           />
           <div>
-            <p className="font-montserrat text-2xl font-semibold text-char-slate-800">
+            <p className="font-montserrat text-2xl font-semibold text-foreground">
               Char Tienda
             </p>
-            <p className="font-sans text-xs tracking-[0.2em] text-char-slate-250">
+            <p className="font-sans text-xs tracking-[0.2em] text-sidebar-idle">
               GESTIÓN COMERCIAL
             </p>
           </div>

@@ -1,10 +1,10 @@
-import {createBrowserRouter, Navigate} from "react-router";
-import {DashboardPage} from "./admin/pages/dashboard/DashboardPage";
-import {ClientsPage} from "./admin/pages/clients/ClientsPage";
-import {LoginPage} from "./auth/pages/login/LoginPage";
-import {AuthLayout, CharAdminLayout} from "./app.lazy";
-import {UsersPage} from "./admin/pages/users/UsersPage";
-
+import { createBrowserRouter, Navigate } from "react-router";
+import { DashboardPage } from "./admin/pages/dashboard/DashboardPage";
+import { ClientsPage } from "./admin/pages/clients/ClientsPage";
+import { LoginPage } from "./auth/pages/login/LoginPage";
+import { AuthLayout, CharAdminLayout } from "./app.lazy";
+import { UsersPage } from "./admin/pages/users/UsersPage";
+import { DesignSystemPage } from "./design-system/pages/DesignSystemPage";
 export const appRouter = createBrowserRouter([
   //Admin routes
   {
@@ -24,6 +24,11 @@ export const appRouter = createBrowserRouter([
         element: <UsersPage />,
       },
     ],
+  },
+  // Documentación visual e interactiva del Design System de Char
+  {
+    path: "/design-system",
+    element: <DesignSystemPage />,
   },
   // redirije cualquier ruta que no exista a /admin
   {

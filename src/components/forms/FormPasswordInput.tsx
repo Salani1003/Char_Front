@@ -2,13 +2,13 @@ import { useState } from "react";
 import type { FieldValues, UseControllerProps } from "react-hook-form";
 import { useController } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/char/input";
+import { Label } from "@/components/char/label";
 import { cn } from "@/lib/utils";
 /**
- * Campo de contraseña controlado por react-hook-form, compuesto por `Label` + `Input`
- * con un botón para mostrar/ocultar el valor ingresado. Muestra el mensaje de error
- * asociado al campo cuando la validación falla.
+ * Campo de contraseña controlado por react-hook-form, compuesto por `Label` +
+ * `Input` de Char, con un botón para mostrar/ocultar el valor ingresado.
+ * Muestra el mensaje de error asociado al campo cuando la validación falla.
  *
  * @param label Texto mostrado sobre el input.
  * @param name Nombre del campo dentro del formulario (debe coincidir con el schema/defaultValues).
@@ -60,9 +60,7 @@ export function FormPasswordInput<TFieldValues extends FieldValues>({
           {visible ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
         </button>
       </div>
-      {error && (
-        <span className="text-xs text-destructive">{error.message}</span>
-      )}
+      {error && <span className="text-xs text-danger">{error.message}</span>}
     </div>
   );
 }
