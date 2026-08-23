@@ -1,5 +1,5 @@
 import axios from "axios";
-import { charApi } from "@/admin/charApi";
+import { charApi } from "@/lib/charApi";
 import type { LoginResponse } from "../interfaces/login.response";
 export const loginAction = async (email: string, password: string) => {
   try {
