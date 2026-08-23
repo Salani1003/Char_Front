@@ -3,25 +3,32 @@ import { DashboardPage } from "./admin/pages/dashboard/DashboardPage";
 import { ClientsPage } from "./admin/pages/clients/ClientsPage";
 import { LoginPage } from "./auth/pages/login/LoginPage";
 import { AuthLayout, CharAdminLayout } from "./app.lazy";
+import { ProtectedRoute } from "./auth/components/ProtectedRoute";
+import { PublicRoute } from "./auth/components/PublicRoute";
 import { UsersPage } from "./admin/pages/users/UsersPage";
 import { DesignSystemPage } from "./design-system/pages/DesignSystemPage";
 export const appRouter = createBrowserRouter([
   //Admin routes
   {
     path: "/admin",
-    element: <CharAdminLayout />,
+    element: <ProtectedRoute />,
     children: [
       {
-        index: true,
-        element: <DashboardPage />,
-      },
-      {
-        path: "clients",
-        element: <ClientsPage />,
-      },
-      {
-        path: "users",
-        element: <UsersPage />,
+        element: <CharAdminLayout />,
+        children: [
+          {
+            index: true,
+            element: <DashboardPage />,
+          },
+          {
+            path: "clients",
+            element: <ClientsPage />,
+          },
+          {
+            path: "users",
+            element: <UsersPage />,
+          },
+        ],
       },
     ],
   },
@@ -38,15 +45,20 @@ export const appRouter = createBrowserRouter([
   // Auth routes
   {
     path: "/auth",
-    element: <AuthLayout />,
+    element: <PublicRoute />,
     children: [
       {
-        index: true,
-        element: <Navigate to="/auth/login" />,
-      },
-      {
-        path: "login",
-        element: <LoginPage />,
+        element: <AuthLayout />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to="/auth/login" />,
+          },
+          {
+            path: "login",
+            element: <LoginPage />,
+          },
+        ],
       },
     ],
   },

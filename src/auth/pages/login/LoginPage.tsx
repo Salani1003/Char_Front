@@ -1,7 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import { z } from "zod";
+import { useAuthStore } from "@/auth/store/auth.store";
 import { Button } from "@/components/char/button";
+import { toast } from "@/components/char/sonner";
 import {
   Card,
   CardContent,
@@ -16,16 +19,20 @@ const loginSchema = z.object({
     .string()
     .min(1, "El email es obligatorio")
     .email("Ingresá un email válido"),
-  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+  password: z.string().min(4, "La contraseña debe tener al menos 4 caracteres"),
 });
 type LoginFormValues = z.infer<typeof loginSchema>;
 /**
  * Pantalla de login del panel de administración. Renderiza una tarjeta con
  * los campos de email y contraseña (con toggle para mostrar/ocultar) y un
- * botón de envío, validados con `react-hook-form` + `zod`. Se renderiza
- * dentro del `Outlet` de `AuthLayout`.
+ * botón de envío, validados con `react-hook-form` + `zod`. Al enviar,
+ * invoca `login` del `useAuthStore`; si falla muestra el `errorMessage`
+ * del store como toast (`@/components/char/sonner`), y si tiene éxito
+ * navega a `/admin`. Se renderiza dentro del `Outlet` de `AuthLayout`.
  */
 export const LoginPage = () => {
+  const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
   const {
     control,
     handleSubmit,
@@ -34,9 +41,16 @@ export const LoginPage = () => {
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
+
   const onSubmit = async (values: LoginFormValues) => {
-    console.log(values);
+    const success = await login(values.email, values.password);
+    if (success) {
+      navigate("/admin", { replace: true });
+      return;
+    }
+    toast.error(useAuthStore.getState().errorMessage);
   };
+
   return (
     <Card className="w-full max-w-2xl [--card-spacing:--spacing(10)]">
       <CardHeader className="gap-3">
