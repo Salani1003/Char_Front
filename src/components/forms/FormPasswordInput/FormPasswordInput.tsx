@@ -60,7 +60,7 @@ export function FormPasswordInput<TFieldValues extends FieldValues>({
           {visible ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
         </button>
       </div>
-      {error && <span className="text-xs text-danger">{error.message}</span>}
+      {error && <span className="text-lg text-danger">{error.message}</span>}
     </div>
   );
 }

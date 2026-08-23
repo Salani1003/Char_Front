@@ -40,7 +40,7 @@ export function FormInput<TFieldValues extends FieldValues>({
         aria-invalid={!!error}
         className={cn(className)}
       />
-      {error && <span className="text-xs text-danger">{error.message}</span>}
+      {error && <span className="text-lg text-danger">{error.message}</span>}
     </div>
   );
 }
