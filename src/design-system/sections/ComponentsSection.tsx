@@ -1,4 +1,5 @@
-import { Search } from "lucide-react";
+import { useState } from "react";
+import { Pencil, Search } from "lucide-react";
 import { Badge } from "@/components/char/badge";
 import { Button } from "@/components/char/button";
 import {
@@ -10,8 +11,11 @@ import {
   CardTitle,
 } from "@/components/char/card";
 import { Checkbox } from "@/components/char/checkbox";
+import { EntityCard } from "@/components/char/entity-card";
 import { Input } from "@/components/char/input";
 import { Label } from "@/components/char/label";
+import { PageHeader, PageHeaderAction } from "@/components/char/page-header";
+import { SearchBar } from "@/components/char/search-bar";
 import { RadioGroup, RadioGroupItem } from "@/components/char/radio-group";
 import {
   Select,
@@ -43,6 +47,7 @@ function Example({
  * funcionan igual que en cualquier pantalla.
  */
 export function ComponentsSection() {
+  const [query, setQuery] = useState("");
   return (
     <DocSection
       id="components"
@@ -292,6 +297,47 @@ export function ComponentsSection() {
               </p>
             </CardContent>
           </Card>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>PageHeader</DocSubheading>
+        <div className="flex flex-col gap-8">
+          <PageHeader
+            title="Usuarios"
+            description="Gestioná los usuarios del sistema y sus permisos de acceso."
+            actions={<Button>Nuevo usuario</Button>}
+          />
+          <PageHeader title="Solo título" />
+          <PageHeader
+            title="María Pérez"
+            description="Con acción de solo ícono."
+            actions={<PageHeaderAction icon={<Pencil />} label="Editar" />}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>SearchBar</DocSubheading>
+        <SearchBar
+          value={query}
+          onValueChange={setQuery}
+          placeholder="Buscar por nombre, email o usuario…"
+        />
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>EntityCard</DocSubheading>
+        <div className="max-w-xs">
+          <EntityCard
+            title="María Pérez"
+            subtitle="maria.perez@char.com"
+            badge={<Badge variant="success">Activo</Badge>}
+            details={[
+              { label: "Rol", value: "Staff" },
+              { label: "Alta", value: "12/03/2025" },
+            ]}
+          />
         </div>
       </div>
     </DocSection>

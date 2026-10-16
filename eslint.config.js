@@ -20,7 +20,7 @@ export default defineConfig([globalIgnores(['dist']), {
     globals: globals.browser,
   },
   rules: {
-    'no-multiple-empty-lines': ['error', { max: 0, maxBOF: 0, maxEOF: 0 }],
+    'no-multiple-empty-lines': ['error', { max: 1, maxBOF: 0, maxEOF: 0 }],
     'padded-blocks': ['error', 'never'],
   },
 }, ...storybook.configs["flat/recommended"]])
