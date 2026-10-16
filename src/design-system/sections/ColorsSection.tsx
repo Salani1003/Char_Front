@@ -13,6 +13,7 @@ const SEMANTIC_PAIRS: Array<[name: string, foreground?: string]> = [
   ["--success", "--success-foreground"],
   ["--warning", "--warning-foreground"],
   ["--danger", "--danger-foreground"],
+  ["--info", "--info-foreground"],
   ["--destructive", "--destructive-foreground"],
   ["--border"],
   ["--input"],

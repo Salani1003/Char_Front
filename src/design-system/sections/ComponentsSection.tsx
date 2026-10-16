@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Pencil, Search } from "lucide-react";
+import { AlertDialog } from "@/components/char/alert-dialog";
+import type { CharAlertDialogVariant } from "@/components/char/alert-dialog";
 import { Badge } from "@/components/char/badge";
 import { Button } from "@/components/char/button";
 import {
@@ -11,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/char/card";
 import { Checkbox } from "@/components/char/checkbox";
+import { Dialog } from "@/components/char/dialog";
 import { EntityCard } from "@/components/char/entity-card";
 import { Input } from "@/components/char/input";
 import { Label } from "@/components/char/label";
@@ -48,6 +51,9 @@ function Example({
  */
 export function ComponentsSection() {
   const [query, setQuery] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [alertVariant, setAlertVariant] =
+    useState<CharAlertDialogVariant | null>(null);
   return (
     <DocSection
       id="components"
@@ -339,6 +345,46 @@ export function ComponentsSection() {
             ]}
           />
         </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>AlertDialog</DocSubheading>
+        <div className="flex flex-wrap gap-3">
+          {(["success", "warning", "danger", "info"] as const).map((v) => (
+            <Button
+              key={v}
+              variant="secondary"
+              onClick={() => setAlertVariant(v)}
+            >
+              {v}
+            </Button>
+          ))}
+        </div>
+        <AlertDialog
+          open={alertVariant !== null}
+          onOpenChange={(open) => !open && setAlertVariant(null)}
+          variant={alertVariant ?? "info"}
+          title="Título de la alerta"
+          description="Descripción breve de lo que pasó o de lo que se va a hacer."
+          cancelLabel="Cancelar"
+        />
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>Dialog</DocSubheading>
+        <div>
+          <Button variant="secondary" onClick={() => setDialogOpen(true)}>
+            Abrir modal
+          </Button>
+        </div>
+        <Dialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          title="Título del modal"
+          description="Descripción breve de lo que se hace acá."
+        >
+          <p className="text-sm">Contenido del modal.</p>
+        </Dialog>
       </div>
     </DocSection>
   );

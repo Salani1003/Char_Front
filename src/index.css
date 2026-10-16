@@ -45,6 +45,8 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-danger: var(--danger);
   --color-danger-foreground: var(--danger-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -105,6 +107,8 @@
   --warning-foreground: var(--text-on-accent);
   --danger: var(--char-danger);
   --danger-foreground: var(--text-on-accent);
+  --info: var(--char-info);
+  --info-foreground: var(--text-on-accent);
   --destructive: var(--char-danger);
   --destructive-foreground: var(--text-on-accent);
 

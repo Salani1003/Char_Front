@@ -4,11 +4,13 @@ import { Button } from "@/components/char/button";
 import { SearchBar } from "@/components/char/search-bar";
 import { PageHeader } from "@/components/char/page-header";
 import { useDebounce } from "@/hooks/useDebounce";
+import { CreateUserDialog } from "@/admin/components/CreateUserDialog";
 import { UserCard } from "@/admin/components/UserCard";
 import { useUsers } from "@/admin/hooks/useUsers";
 
 export const UsersPage = () => {
   const [search, setSearch] = useState("");
+  const [createOpen, setCreateOpen] = useState(false);
   const debouncedSearch = useDebounce(search);
   const { data } = useUsers({ search: debouncedSearch });
 
@@ -18,7 +20,7 @@ export const UsersPage = () => {
         title="Usuarios"
         description="Gestioná los usuarios del sistema y sus permisos de acceso."
         actions={
-          <Button>
+          <Button onClick={() => setCreateOpen(true)}>
             <Plus /> Nuevo usuario
           </Button>
         }
@@ -33,6 +35,7 @@ export const UsersPage = () => {
           <UserCard key={user.id} user={user} />
         ))}
       </div>
+      <CreateUserDialog open={createOpen} onOpenChange={setCreateOpen} />
     </div>
   );
 };
