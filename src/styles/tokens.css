@@ -153,9 +153,9 @@
   --pad-control-y: 11px;
   --pad-control-x: 18px;
 
-  --sidebar-width: 240px;
-  --sidebar-width-rail: 76px;
-  --sidebar-width-mobile: 270px;
+  --sidebar-width: 330px;
+  --sidebar-width-rail: 120px;
+  --sidebar-width-mobile: 300px;
   --header-height: 72px;
   --header-height-mobile: 64px;
   --drawer-width: 420px;

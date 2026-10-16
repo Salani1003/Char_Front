@@ -24,7 +24,20 @@ dist-ssr
 *.sw?
 
 .env
+.env.*
+!.env.template
 *storybook.log
 storybook-static
 
 src/references
+
+# Capturas y logs de las sesiones de Playwright MCP
+.playwright-mcp
+
+# Estado local de Claude Code (settings.json sí se versiona)
+.claude/scheduled_tasks.lock
+.claude/settings.local.json
+
+# Artefactos de TypeScript y tests
+*.tsbuildinfo
+coverage
