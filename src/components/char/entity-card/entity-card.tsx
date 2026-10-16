@@ -31,6 +31,7 @@ function getInitials(name: string) {
  * @param subtitle Texto secundario bajo el título (ej. email).
  * @param avatar Contenido del avatar; por defecto las iniciales de `title`.
  * @param badge Elemento de estado a la derecha del título (ej. `Badge`).
+ * @param menu Menú de acciones en la esquina (ej. `ActionsMenu`).
  * @param details Datos etiquetados (`icon`, `label`, `value`).
  * @param actions Botones del pie de la tarjeta.
  */
@@ -39,6 +40,7 @@ export function EntityCard({
   subtitle,
   avatar,
   badge,
+  menu,
   details,
   actions,
   className,
@@ -48,6 +50,7 @@ export function EntityCard({
   subtitle?: ReactNode;
   avatar?: ReactNode;
   badge?: ReactNode;
+  menu?: ReactNode;
   details?: EntityCardDetail[];
   actions?: ReactNode;
 }) {
@@ -73,6 +76,7 @@ export function EntityCard({
           ) : null}
         </div>
         {badge ? <div className="shrink-0">{badge}</div> : null}
+        {menu ? <div className="-my-1 -mr-2 shrink-0">{menu}</div> : null}
       </div>
       {details?.length ? (
         <dl className="flex flex-col gap-2 border-t border-border pt-3 text-xs">
@@ -84,7 +88,7 @@ export function EntityCard({
                 </span>
               ) : null}
               <dt className="text-muted-foreground">{label}</dt>
-              <dd className="ml-auto min-w-0 truncate text-foreground">
+              <dd className="ml-auto min-w-0 text-right wrap-break-word text-foreground">
                 {value}
               </dd>
             </div>

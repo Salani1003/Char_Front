@@ -7,6 +7,8 @@ export const useCreateUser = () => {
 
   return useMutation({
     mutationFn: createUserAction,
+    // No conservar el payload (incluye la contraseña) en el caché de mutaciones.
+    gcTime: 0,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["users"] }),
   });
 };

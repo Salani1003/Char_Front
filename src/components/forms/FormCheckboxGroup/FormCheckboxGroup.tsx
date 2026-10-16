@@ -42,7 +42,9 @@ export function FormCheckboxGroup<TFieldValues extends FieldValues>({
 
   const toggle = (value: number, checked: boolean) => {
     field.onChange(
-      checked ? [...selected, value] : selected.filter((v) => v !== value),
+      checked
+        ? [...selected, value].sort((a, b) => a - b)
+        : selected.filter((v) => v !== value),
     );
   };
 

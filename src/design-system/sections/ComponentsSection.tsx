@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Pencil, Search } from "lucide-react";
+import { Pencil, Search, Trash2 } from "lucide-react";
+import { ActionsMenu } from "@/components/char/actions-menu";
 import { AlertDialog } from "@/components/char/alert-dialog";
 import type { CharAlertDialogVariant } from "@/components/char/alert-dialog";
 import { Badge } from "@/components/char/badge";
@@ -385,6 +386,24 @@ export function ComponentsSection() {
         >
           <p className="text-sm">Contenido del modal.</p>
         </Dialog>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>ActionsMenu</DocSubheading>
+        <div>
+          <ActionsMenu
+            label="Acciones"
+            items={[
+              { label: "Editar", icon: <Pencil />, onSelect: () => {} },
+              {
+                label: "Eliminar",
+                icon: <Trash2 />,
+                onSelect: () => {},
+                variant: "danger",
+              },
+            ]}
+          />
+        </div>
       </div>
     </DocSection>
   );

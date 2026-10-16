@@ -1,7 +1,9 @@
-import { CalendarDays, Clock } from "lucide-react";
+import { CalendarDays, Clock, Pencil, Trash2 } from "lucide-react";
+import { ActionsMenu } from "@/components/char/actions-menu";
 import { Badge } from "@/components/char/badge";
 import { EntityCard } from "@/components/char/entity-card";
 import type { User } from "../interfaces/user.interface";
+import { getUserFullName } from "../utils/getUserFullName";
 
 const dateFormat = new Intl.DateTimeFormat("es-AR", { dateStyle: "short" });
 const dateTimeFormat = new Intl.DateTimeFormat("es-AR", {
@@ -9,21 +11,30 @@ const dateTimeFormat = new Intl.DateTimeFormat("es-AR", {
   timeStyle: "short",
 });
 
-function getRoleLabel(user: User) {
-  if (user.is_superuser) return "Superadmin";
-  if (user.is_staff) return "Staff";
-  return "Usuario";
-}
-
 /**
  * Tarjeta de un usuario del sistema para el listado de `UsersPage`. Adapta un
  * `User` a la `EntityCard` genérica: nombre, email, estado (activo/inactivo),
- * rol, fecha de alta y último acceso.
+ * roles (grupos asignados), fecha de alta y último acceso. Incluye un menú de tres puntitos con las
+ * opciones "Editar" y "Eliminar".
  *
  * @param user Usuario a mostrar.
+ * @param roles Nombres de los grupos asignados al usuario (el backend solo
+ * devuelve sus ids; la pantalla los resuelve con `useGroups`).
+ * @param onEdit Se llama con el usuario al elegir "Editar".
+ * @param onDelete Se llama con el usuario al elegir "Eliminar".
  */
-export function UserCard({ user }: { user: User }) {
-  const fullName = `${user.first_name} ${user.last_name}`.trim() || user.email;
+export function UserCard({
+  user,
+  roles,
+  onEdit,
+  onDelete,
+}: {
+  user: User;
+  roles: string[];
+  onEdit: (user: User) => void;
+  onDelete: (user: User) => void;
+}) {
+  const fullName = getUserFullName(user);
 
   return (
     <EntityCard
@@ -34,8 +45,35 @@ export function UserCard({ user }: { user: User }) {
           {user.is_active ? "Activo" : "Inactivo"}
         </Badge>
       }
+      menu={
+        <ActionsMenu
+          label={`Acciones de ${fullName}`}
+          items={[
+            { label: "Editar", icon: <Pencil />, onSelect: () => onEdit(user) },
+            {
+              label: "Eliminar",
+              icon: <Trash2 />,
+              onSelect: () => onDelete(user),
+              variant: "danger",
+            },
+          ]}
+        />
+      }
       details={[
-        { label: "Rol", value: getRoleLabel(user) },
+        {
+          label: "Roles",
+          value: roles.length ? (
+            <span className="flex flex-wrap justify-end gap-1">
+              {roles.map((role) => (
+                <Badge key={role} variant="outline">
+                  {role}
+                </Badge>
+              ))}
+            </span>
+          ) : (
+            "Sin roles"
+          ),
+        },
         {
           icon: <CalendarDays />,
           label: "Alta",
