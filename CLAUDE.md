@@ -52,8 +52,8 @@ components/ui (shadcn/base-ui primitive)
 
 Routing is centralized in `src/app.router.tsx` using `react-router`'s `createBrowserRouter`, with two top-level route trees:
 
-- `/admin/*` → `CharAdminLayout`, containing `DashboardPage` (index) and `ClientsPage`
-- `/auth/*` → `AuthLayout`, containing `LoginPage`
+- `/admin/*` → `CharAdminLayout`, containing `DashboardPage` (index), `ClientsPage` and `UsersPage` (all behind `ProtectedRoute`)
+- `/auth/*` → `AuthLayout`, containing `LoginPage` (behind `PublicRoute`)
 - `/design-system` → `DesignSystemPage` (no layout), the Design System catalog described above
 
 Any unmatched route redirects to `/admin`. Route layouts (`AuthLayout`, `CharAdminLayout`) are lazy-loaded via `src/app.lazy.tsx` (`React.lazy`), and `src/main.tsx` wraps the app in a top-level `<Suspense>`. When adding a new layout, register its lazy import in `app.lazy.tsx` rather than importing it directly in the router.
@@ -75,8 +75,14 @@ Some comments in the codebase (e.g. layout files) are written in Spanish; match 
 
 - **Axios** for HTTP requests and **TanStack Query** (`@tanstack/react-query`) for server-state management: fetching, caching, mutations, and data synchronization. Do not reimplement these responsibilities manually with `fetch`, `useEffect`, or ad-hoc state when TanStack Query can handle it.
 
+### Auth / session
+
+`src/auth/store/auth.store.ts` (Zustand, persisted in `localStorage` as `auth-storage`) holds `access`/`refresh` tokens and the current user. `src/lib/charApi.ts` is the shared axios instance: it attaches the `access` token and, on a 401, refreshes once via `/auth/token/refresh/` and retries. The backend rotates and blacklists the refresh token on every refresh, so the new `refresh` returned must always be stored too (`setTokens(access, refresh)`) — saving only `access` logs the user out on the second renewal.
+
 ### Conventions
 
 - Every component must have a JSDoc comment above its definition, and that JSDoc must be kept up to date whenever the component's props or behavior change.
 - Storybook is installed (`.storybook/main.ts`) and used to describe/document component behavior. Config: `@storybook/react-vite` framework, addons `@chromatic-com/storybook`, `@storybook/addon-a11y`, `@storybook/addon-docs`. Stories are picked up from `src/**/*.stories.@(js|jsx|mjs|ts|tsx)` and `src/**/*.mdx` — colocate a `*.stories.tsx` next to any component that needs one. No example stories are left in the repo (the default `src/stories/` scaffold was removed). The vitest/playwright interaction-testing addon and `@storybook/addon-mcp` were deliberately left out — both pull in vitest/Playwright/Chromium as (transitive/peer) deps, which isn't needed just to document behavior.
 - Respond to the user in Spanish when working in this repository.
+- After creating or modifying files, always run Prettier and ESLint on them: `npx prettier --write <files>` then `npx eslint --fix <files>`, and make sure `npx eslint <files>` is clean. A `PostToolUse` hook in `.claude/settings.json` already does this automatically for files written with the Write/Edit tools; files changed through Bash (scripts, `sed`, heredocs) are not covered, so run both commands manually after those. Order matters: `eslint.config.js` sets `no-multiple-empty-lines` (`max: 0`) and `padded-blocks: never`, which conflict with Prettier's output, so ESLint's `--fix` runs last.
+- Whenever code changes, update the affected JSDoc comments, the READMEs and the `CLAUDE.md` files in the same change if they describe it.

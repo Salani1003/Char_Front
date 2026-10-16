@@ -14,7 +14,7 @@ interface AuthState {
   // Actions
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
-  setAccessToken: (access: string) => void;
+  setTokens: (access: string, refresh: string) => void;
 }
 /**
  * Store de autenticación (Zustand). Mantiene el estado de sesión
@@ -25,10 +25,11 @@ interface AuthState {
  * persiste los tokens, obtiene el usuario y actualiza el `status` según
  * el resultado; si `loginAction` o `getCurrentUserAction` fallan, guarda
  * el mensaje en `errorMessage` para que la UI lo muestre. `logout` limpia
- * la sesión. `setAccessToken` reemplaza solo el `access` token; lo usa
+ * la sesión. `setTokens` reemplaza el par `access`/`refresh`; lo usa
  * el interceptor de respuesta de `charApi` (fuera de React, vía
- * `useAuthStore.getState()`) cuando renueva la sesión con el refresh
- * token tras un 401. El estado se persiste en `localStorage` bajo la
+ * `useAuthStore.getState()`) cuando renueva la sesión tras un 401. Hay
+ * que guardar también el `refresh`: el backend rota el refresh token en
+ * cada renovación e invalida el anterior. El estado se persiste en `localStorage` bajo la
  * clave `auth-storage` para mantener la sesión entre recargas.
  */
 export const useAuthStore = create<AuthState>()(
@@ -74,8 +75,8 @@ export const useAuthStore = create<AuthState>()(
           errorMessage: undefined,
         });
       },
-      setAccessToken: (access) => {
-        set({ access });
+      setTokens: (access, refresh) => {
+        set({ access, refresh });
       },
     }),
     {

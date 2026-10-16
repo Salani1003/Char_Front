@@ -13,13 +13,16 @@ export const loginAction = async (email: string, password: string) => {
       if (!error.response) {
         throw new Error(
           "No se pudo conectar con el servidor. Intentá nuevamente.",
+          { cause: error },
         );
       }
       if (error.response.status === 400 || error.response.status === 401) {
-        throw new Error("Email o contraseña incorrectos.");
+        throw new Error("Email o contraseña incorrectos.", { cause: error });
       }
-      throw new Error("Ocurrió un error en el servidor. Intentá más tarde.");
+      throw new Error("Ocurrió un error en el servidor. Intentá más tarde.", {
+        cause: error,
+      });
     }
-    throw new Error("Ocurrió un error inesperado.");
+    throw new Error("Ocurrió un error inesperado.", { cause: error });
   }
 };

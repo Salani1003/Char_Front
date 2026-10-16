@@ -6,15 +6,15 @@ import { refreshAction } from "@/auth/actions/refresh.action";
  * la API de Char. Un interceptor de request adjunta el `access` token
  * vigente (leído de `useAuthStore`) a cada llamada; un interceptor de
  * response detecta un 401, renueva la sesión una única vez por request
- * (usando el `refresh` token contra `/auth/token/refresh/`) y reintenta
- * el request original con el nuevo `access` token. Si el refresh falla
+ * (usando el `refresh` token contra `/auth/token/refresh/`, y guardando
+ * el par `access`/`refresh` nuevo porque el backend rota el refresh
+ * token) y reintenta el request original con el nuevo `access` token. Si el refresh falla
  * (o no hay `refresh` token), cierra la sesión vía `useAuthStore` — lo
  * que hace que `ProtectedRoute` redirija a `/auth/login`.
  */
 const charApi = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
-
 charApi.interceptors.request.use((config) => {
   const { access } = useAuthStore.getState();
   if (access) {
@@ -22,29 +22,25 @@ charApi.interceptors.request.use((config) => {
   }
   return config;
 });
-
 interface RetriableRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
-
 let refreshPromise: Promise<string | null> | null = null;
-
 const refreshAccessToken = async () => {
-  const { refresh, setAccessToken, logout } = useAuthStore.getState();
+  const { refresh, setTokens, logout } = useAuthStore.getState();
   if (!refresh) {
     logout();
     return null;
   }
   try {
-    const { access } = await refreshAction(refresh);
-    setAccessToken(access);
+    const { access, refresh: newRefresh } = await refreshAction(refresh);
+    setTokens(access, newRefresh);
     return access;
   } catch {
     logout();
     return null;
   }
 };
-
 charApi.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {

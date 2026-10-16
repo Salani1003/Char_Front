@@ -40,10 +40,14 @@ Las páginas nuevas deben seguir la convención `pages/<feature>/<Feature>Page.t
 
 El ruteo está centralizado en `src/app.router.tsx` usando `createBrowserRouter` de `react-router`, con dos árboles de rutas principales:
 
-- `/admin/*` → `CharAdminLayout`, con `DashboardPage` (index) y `ClientsPage`
-- `/auth/*` → `AuthLayout`, con `LoginPage`
+- `/admin/*` → `CharAdminLayout`, con `DashboardPage` (index), `ClientsPage` y `UsersPage` (protegidas por `ProtectedRoute`)
+- `/auth/*` → `AuthLayout`, con `LoginPage` (protegida por `PublicRoute`)
 
 Cualquier ruta no reconocida redirige a `/admin`. Los layouts (`AuthLayout`, `CharAdminLayout`) se cargan de forma diferida (lazy) vía `src/app.lazy.tsx`, y `src/main.tsx` envuelve la app en un `<Suspense>` de nivel superior.
+
+### Autenticación
+
+El store de auth (`src/auth/store/auth.store.ts`, Zustand persistido en `localStorage`) guarda los tokens `access`/`refresh` y el usuario actual. `src/lib/charApi.ts` es la instancia compartida de axios: adjunta el `access` token y, ante un 401, renueva la sesión una vez vía `/auth/token/refresh/` y reintenta. El backend rota el refresh token en cada renovación, por lo que se guarda el par completo (`setTokens`).
 
 ### UI / estilos
 
