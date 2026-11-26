@@ -120,7 +120,6 @@ export const UsersPage = () => {
         value={search}
         onValueChange={setSearch}
         placeholder="Buscar por nombre, email o usuario…"
-        title="Buscar"
         actions={
           <FiltersPopover
             filters={USER_FILTERS}
@@ -172,15 +171,17 @@ export const UsersPage = () => {
           ))}
         </div>
       )}
-      <Pagination
-        page={page}
-        pageSize={pageSize}
-        total={data?.count ?? 0}
-        itemLabel={{ singular: "usuario", plural: "usuarios" }}
-        disabled={isPlaceholderData}
-        onPageChange={setPage}
-        onPageSizeChange={setPageSize}
-      />
+      {data ? (
+        <Pagination
+          page={page}
+          pageSize={pageSize}
+          total={data.count}
+          itemLabel={{ singular: "usuario", plural: "usuarios" }}
+          disabled={isPlaceholderData}
+          onPageChange={setPage}
+          onPageSizeChange={setPageSize}
+        />
+      ) : null}
       <UserFormDialog
         open={formOpen}
         onOpenChange={setFormOpen}

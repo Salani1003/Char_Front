@@ -7,6 +7,8 @@ export interface AdminNavItem {
   icon: LucideIcon;
   /** `true` para que el enlace solo esté activo con la ruta exacta. */
   end: boolean;
+  /** Frase corta que explica para qué sirve la pantalla (la usa el Dashboard). */
+  description: string;
 }
 
 /**
@@ -15,7 +17,25 @@ export interface AdminNavItem {
  * Para agregar una pantalla al menú, agregarla acá.
  */
 export const adminNavItems: AdminNavItem[] = [
-  { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/admin/clients", label: "Clientes", icon: Users, end: false },
-  { to: "/admin/users", label: "Usuarios", icon: UserCog, end: false },
+  {
+    to: "/admin",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    end: true,
+    description: "Resumen de la actividad de Char.",
+  },
+  {
+    to: "/admin/clients",
+    label: "Clientes",
+    icon: Users,
+    end: false,
+    description: "Consultá y administrá la cartera de clientes.",
+  },
+  {
+    to: "/admin/users",
+    label: "Usuarios",
+    icon: UserCog,
+    end: false,
+    description: "Quién accede al sistema y con qué permisos.",
+  },
 ];

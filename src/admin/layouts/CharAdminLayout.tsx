@@ -22,6 +22,7 @@ import { AdminSearch } from "../components/AdminSearch";
 import { PageSkeleton } from "../components/PageSkeleton";
 import { UserInfoDialog } from "../components/UserInfoDialog";
 import { adminNavItems } from "../config/admin-nav";
+import { getUserFullName } from "../utils/getUserFullName";
 /**
  * Marco compartido por todas las pantallas de administración (dashboard,
  * clientes, usuarios, etc.). Muestra la navegación primaria de Char en un
@@ -30,7 +31,7 @@ import { adminNavItems } from "../config/admin-nav";
  * estilo del kit de referencia (franja + fondo en tinte accent) — y una barra
  * superior (`Header`) con el buscador de pantallas (`AdminSearch`),
  * notificaciones y el usuario autenticado (avatar con sus iniciales y su
- * nombre y apellido, con un menú que se abre desde un chevron `v` a su lado:
+ * nombre y apellido — o su email si no los tiene —, con un menú que se abre desde un chevron `v` a su lado:
  * "Mi información" — modal `UserInfoDialog` con los datos de la cuenta — y
  * "Cerrar sesión", que invalida el refresh token en el backend), dejando el
  * contenido de la ruta activa (`Outlet`) en el área principal. Las pantallas
@@ -56,10 +57,13 @@ const CharAdminLayout = () => {
     await logout();
     void navigate("/auth/login", { replace: true });
   };
-  const initials = user
-    ? `${user.first_name[0] ?? ""}${user.last_name[0] ?? ""}`.toUpperCase()
-    : "";
-  const fullName = user ? `${user.first_name} ${user.last_name}`.trim() : "";
+  const fullName = user ? getUserFullName(user) : "";
+  const initials = fullName
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0]?.toUpperCase())
+    .join("");
   return (
     <div className="flex min-h-screen w-full bg-surface-app text-foreground">
       {mobileNavOpen ? (
@@ -173,10 +177,9 @@ const CharAdminLayout = () => {
             <button
               type="button"
               aria-label="Notificaciones"
-              className="relative text-muted-foreground transition-colors hover:text-foreground"
+              className="text-muted-foreground transition-colors hover:text-foreground"
             >
               <Bell className="size-5" />
-              <span className="absolute -top-0.5 right-0 size-2 rounded-full border-[1.5px] border-card bg-primary" />
             </button>
             <div className="hidden h-6 w-px bg-border md:block" />
             <div className="flex items-center gap-3">

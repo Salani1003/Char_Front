@@ -21,7 +21,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
-export const CustomTitle: Story = { args: { title: "Buscar clientes" } };
 export const WithFiltersPopover: Story = {
   args: {
     actions: (
