@@ -49,6 +49,10 @@ components/ui (shadcn/base-ui primitive)
 - `components/forms/*` components own the react-hook-form wiring (`useController`/`useFormContext`) and stay separate from `components/char` (which must stay agnostic of any form library).
 - Never hardcode colors (hex/oklch/`bg-[#...]`) on a screen or component — use a Tailwind utility backed by a token (`bg-primary`, `text-danger`, `rounded-card`, ...) from `src/styles/tokens.css`. To change the palette, edit `tokens.css` (and its Tailwind bridge in `index.css`) only.
 
+### Estética (identidad visual)
+
+Boutique premium sobre la paleta de marca (crema + slate + acento teal + dorado `--char-brand-gold`): títulos en serif (`font-display`, Lora; `h1`–`h3` lo aplican en `index.css`), sombras suaves en capas (`--shadow-card`, `--shadow-card-hover`, `--shadow-dropdown`) y easing `--ease-standard`. Motivos recurrentes: filo dorado superior que se extiende al hover (accesos del `DashboardPage` y `EntityCard`, vía `group-hover/card`), entrada suave con la utilidad `animate-rise` (`index.css`; el `PageHeader` y los accesos del dashboard la usan) y sidebar con degradé slate e ítem activo con filo dorado. Las animaciones son solo CSS y `index.css` las apaga con `prefers-reduced-motion`; no agregues librerías de animación ni animaciones que remonten rutas.
+
 ### Routing
 
 Routing is centralized in `src/app.router.tsx` using `react-router`'s `createBrowserRouter`, with two top-level route trees:
