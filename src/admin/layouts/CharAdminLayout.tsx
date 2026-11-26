@@ -1,40 +1,41 @@
 // El diseño que tengan todas las pantallas de administracion
-import { useState, type ComponentProps } from "react";
+import { Suspense, useState, type ComponentProps } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router";
 import {
   Bell,
   ChevronDown,
   ChevronRight,
-  LayoutDashboard,
   LogOut,
   Menu,
-  Search,
-  Users,
-  UserCog,
+  UserRound,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/auth/store/auth.store";
-import { Input } from "@/components/char/input";
+import { ActionsMenu } from "@/components/char/actions-menu";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/char/tooltip";
-const NAV_ITEMS = [
-  { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/admin/clients", label: "Clientes", icon: Users, end: false },
-  { to: "/admin/users", label: "Usuarios", icon: UserCog, end: false },
-];
+import { AdminSearch } from "../components/AdminSearch";
+import { PageSkeleton } from "../components/PageSkeleton";
+import { UserInfoDialog } from "../components/UserInfoDialog";
+import { adminNavItems } from "../config/admin-nav";
 /**
  * Marco compartido por todas las pantallas de administración (dashboard,
  * clientes, usuarios, etc.). Muestra la navegación primaria de Char en un
  * panel oscuro (`Sidebar`) — logo + wordmark "Char Tienda" y los enlaces de
- * `NAV_ITEMS`, resaltando el activo con el estilo del kit de referencia
- * (franja + fondo en tinte accent) — y una barra superior (`Header`) con
- * buscador, notificaciones, el usuario autenticado y la acción de cerrar
- * sesión, dejando el contenido de la ruta activa (`Outlet`) en el área
- * principal.
+ * `adminNavItems` (`admin/config/admin-nav.ts`), resaltando el activo con el
+ * estilo del kit de referencia (franja + fondo en tinte accent) — y una barra
+ * superior (`Header`) con el buscador de pantallas (`AdminSearch`),
+ * notificaciones y el usuario autenticado (avatar con sus iniciales y su
+ * nombre y apellido, con un menú que se abre desde un chevron `v` a su lado:
+ * "Mi información" — modal `UserInfoDialog` con los datos de la cuenta — y
+ * "Cerrar sesión", que invalida el refresh token en el backend), dejando el
+ * contenido de la ruta activa (`Outlet`) en el área principal. Las pantallas
+ * se cargan lazy (`app.lazy.tsx`), así que el `Outlet` va dentro de un
+ * `Suspense` que muestra `PageSkeleton` sin desmontar el marco.
  *
  * En desktop/tablet el panel es colapsable a un modo "rail" (solo iconos,
  * con tooltip al pasar el mouse) mediante el botón en la esquina superior
@@ -47,18 +48,18 @@ const NAV_ITEMS = [
 const CharAdminLayout = () => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
-  const handleLogout = () => {
-    logout();
-    navigate("/auth/login", { replace: true });
+  const handleLogout = async () => {
+    await logout();
+    void navigate("/auth/login", { replace: true });
   };
   const initials = user
     ? `${user.first_name[0] ?? ""}${user.last_name[0] ?? ""}`.toUpperCase()
     : "";
   const fullName = user ? `${user.first_name} ${user.last_name}`.trim() : "";
-  const roleLabel = user?.is_superuser ? "Administrador" : "Usuario";
   return (
     <div className="flex min-h-screen w-full bg-surface-app text-foreground">
       {mobileNavOpen ? (
@@ -118,7 +119,7 @@ const CharAdminLayout = () => {
           </button>
         </div>
         <nav className="flex flex-1 flex-col gap-1">
-          {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
+          {adminNavItems.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -166,13 +167,7 @@ const CharAdminLayout = () => {
           >
             <Menu className="size-5" />
           </button>
-          <div className="min-w-0 flex-1 md:max-w-sm">
-            <Input
-              icon={<Search className="size-4" />}
-              placeholder="Buscar..."
-              aria-label="Buscar"
-            />
-          </div>
+          <AdminSearch />
           <div className="hidden flex-1 md:block" />
           <div className="flex items-center gap-3 md:gap-5">
             <button
@@ -188,28 +183,36 @@ const CharAdminLayout = () => {
               <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-sidebar font-display text-sm font-semibold text-sidebar-heading">
                 {initials}
               </div>
-              <div className="hidden sm:block">
-                <p className="text-sm leading-tight font-semibold text-foreground">
-                  {fullName}
-                </p>
-                <p className="text-xs text-muted-foreground">{roleLabel}</p>
-              </div>
-              <ChevronDown className="hidden size-3.5 text-muted-foreground sm:block" />
+              <p className="hidden text-sm leading-tight font-semibold text-foreground sm:block">
+                {fullName}
+              </p>
+              <ActionsMenu
+                label="Menú de usuario"
+                trigger={<ChevronDown />}
+                items={[
+                  {
+                    label: "Mi información",
+                    icon: <UserRound />,
+                    onSelect: () => setInfoOpen(true),
+                  },
+                  {
+                    label: "Cerrar sesión",
+                    icon: <LogOut />,
+                    variant: "danger",
+                    onSelect: () => void handleLogout(),
+                  },
+                ]}
+              />
             </div>
-            <button
-              type="button"
-              onClick={handleLogout}
-              aria-label="Cerrar sesión"
-              className="text-muted-foreground transition-colors hover:text-danger"
-            >
-              <LogOut className="size-5" />
-            </button>
           </div>
         </header>
         <main className="flex-1 overflow-y-auto p-5 md:p-8">
-          <Outlet />
+          <Suspense fallback={<PageSkeleton />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
+      <UserInfoDialog open={infoOpen} onOpenChange={setInfoOpen} user={user} />
     </div>
   );
 };

@@ -1,12 +1,28 @@
 import axios from "axios";
 
-type Messages = string | string[];
-
 /** Claves de DRF que traen un error general (no atado a un campo). */
 const GENERAL_KEYS = ["detail", "non_field_errors"];
 
-const toText = (value: unknown) =>
-  Array.isArray(value) ? value.join(" ") : String(value);
+/**
+ * Aplana los errores anidados de DRF a claves con puntos: `{ details: { pages: ["x"] } }`
+ * pasa a `details.pages`. Los índices de listas (`contents: { 0: ["x"] }`) se agrupan en
+ * la clave de la lista (`details.contents`), que es la que tiene el formulario.
+ */
+const flatten = (
+  value: unknown,
+  path: string,
+  out: Record<string, string>,
+): void => {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    for (const [key, child] of Object.entries(value)) {
+      flatten(child, /^\d+$/.test(key) ? path : `${path}.${key}`, out);
+    }
+  } else if (Array.isArray(value)) {
+    for (const child of value) flatten(child, path, out);
+  } else if (value !== null && value !== undefined) {
+    out[path] = out[path] ? `${out[path]} ${String(value)}` : String(value);
+  }
+};
 
 /**
  * Error de una request a la API con los mensajes tal como los devolvió el
@@ -56,9 +72,12 @@ export function toApiError(error: unknown): ApiError {
 
   const fieldErrors: Record<string, string> = {};
   const general: string[] = [];
-  for (const [key, value] of Object.entries(data as Record<string, Messages>)) {
-    if (GENERAL_KEYS.includes(key)) general.push(toText(value));
-    else fieldErrors[key] = toText(value);
+  for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
+    if (GENERAL_KEYS.includes(key)) {
+      general.push(Array.isArray(value) ? value.join(" ") : String(value));
+    } else {
+      flatten(value, key, fieldErrors);
+    }
   }
 
   return new ApiError(general.join(" ") || error.message, fieldErrors, {

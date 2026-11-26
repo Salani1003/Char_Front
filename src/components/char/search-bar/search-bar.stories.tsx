@@ -1,13 +1,6 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Label } from "@/components/char/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/char/select";
+import { FiltersPopover } from "@/components/char/filters-popover";
 import { SearchBar } from "./search-bar";
 
 const meta = {
@@ -29,22 +22,24 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 export const CustomTitle: Story = { args: { title: "Buscar clientes" } };
-export const WithFilters: Story = {
+export const WithFiltersPopover: Story = {
   args: {
-    filters: (
-      <div className="flex flex-col gap-1.5">
-        <Label>Estado</Label>
-        <Select defaultValue="active">
-          <SelectTrigger className="w-44">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="active">Activos</SelectItem>
-            <SelectItem value="inactive">Inactivos</SelectItem>
-            <SelectItem value="all">Todos</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+    actions: (
+      <FiltersPopover
+        filters={[
+          {
+            key: "status",
+            type: "chips",
+            label: "Estado",
+            options: [
+              { value: "active", label: "Activos" },
+              { value: "inactive", label: "Inactivos" },
+            ],
+          },
+        ]}
+        value={{}}
+        onChange={() => {}}
+      />
     ),
   },
 };

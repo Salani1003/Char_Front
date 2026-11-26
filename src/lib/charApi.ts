@@ -8,8 +8,10 @@ import { refreshAction } from "@/auth/actions/refresh.action";
  * response detecta un 401, renueva la sesión una única vez por request
  * (usando el `refresh` token contra `/auth/token/refresh/`, y guardando
  * el par `access`/`refresh` nuevo porque el backend rota el refresh
- * token) y reintenta el request original con el nuevo `access` token. Si el refresh falla
- * (o no hay `refresh` token), cierra la sesión vía `useAuthStore` — lo
+ * token) y reintenta el request original con el nuevo `access` token. Un 401
+ * de `/auth/token/` o `/auth/token/refresh/` (login / refresh) no dispara la
+ * renovación. Si el refresh falla (o no hay `refresh` token), limpia la sesión
+ * local con `clearSession` de `useAuthStore` (sin llamar al backend) — lo
  * que hace que `ProtectedRoute` redirija a `/auth/login`.
  */
 const charApi = axios.create({
@@ -27,9 +29,9 @@ interface RetriableRequestConfig extends InternalAxiosRequestConfig {
 }
 let refreshPromise: Promise<string | null> | null = null;
 const refreshAccessToken = async () => {
-  const { refresh, setTokens, logout } = useAuthStore.getState();
+  const { refresh, setTokens, clearSession } = useAuthStore.getState();
   if (!refresh) {
-    logout();
+    clearSession();
     return null;
   }
   try {
@@ -37,7 +39,7 @@ const refreshAccessToken = async () => {
     setTokens(access, newRefresh);
     return access;
   } catch {
-    logout();
+    clearSession();
     return null;
   }
 };
@@ -45,14 +47,14 @@ charApi.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as RetriableRequestConfig | undefined;
-    const isRefreshCall = originalRequest?.url?.includes(
-      "/auth/token/refresh/",
-    );
+    // `/auth/token/` (login) y `/auth/token/refresh/`: un 401 ahí no es una
+    // sesión vencida, así que no se intenta renovar.
+    const isAuthCall = originalRequest?.url?.includes("/auth/token/");
     if (
       error.response?.status !== 401 ||
       !originalRequest ||
       originalRequest._retry ||
-      isRefreshCall
+      isAuthCall
     ) {
       return Promise.reject(error);
     }

@@ -23,9 +23,10 @@ This is a React 19 + TypeScript + Vite app for "Char", split into feature domain
 - `src/auth/` — auth screens (`layouts/AuthLayout.tsx`, `pages/login/LoginPage.tsx`)
 - `src/components/ui/` — shadcn/base-ui primitives (button, input, label, card, ...). Screens must not import from here directly — see Component architecture below.
 - `src/components/char/` — Char's own Design System components (own API/variants/identity), wrapping `components/ui` primitives. Screens import from here.
-- `src/components/forms/` — react-hook-form integration layer (`FormInput`, `FormPasswordInput`, ...), built on top of `components/char`.
+- `src/components/forms/` — react-hook-form integration layer (`FormInput`, `FormPasswordInput`, `FormTextarea`, `FormSwitch`, `FormCheckboxGroup`), built on top of `components/char`.
 - `src/styles/tokens.css` — Char design tokens (color, radius, spacing, typography, elevation, motion), imported by `src/index.css` and bridged into Tailwind utilities via `@theme inline`.
-- `src/lib/` — shared utilities (`cn()` helper combining `clsx` + `tailwind-merge`)
+- `src/lib/` — shared utilities (`cn()` helper combining `clsx` + `tailwind-merge`; `apiError.ts` normalizes DRF errors — including nested ones, flattened to dotted keys — into `ApiError`, and `applyApiErrors.ts` maps them onto a react-hook-form)
+- `src/hooks/` — shared hooks (`useDebounce`, `useDocumentTitle` to set the tab title per screen)
 - `src/references/` — a reference Char UI kit (design tokens, atoms/molecules/organisms/templates as `.jsx` + `.prompt.md`) used as the source of truth for the brand's visual identity. Not wired into the app — consult it when porting a new component into `components/char`, don't import from it directly.
 - `src/design-system/` — the `/design-system` route: a live, interactive catalog of every token in `tokens.css`/`index.css` and every `components/char` component. Reads token values at runtime via `getComputedStyle` (`src/design-system/lib/cssTokens.ts`) instead of duplicating them — when adding a new token or a new `components/char` component, add it here too so the catalog stays complete.
 
@@ -56,7 +57,9 @@ Routing is centralized in `src/app.router.tsx` using `react-router`'s `createBro
 - `/auth/*` → `AuthLayout`, containing `LoginPage` (behind `PublicRoute`)
 - `/design-system` → `DesignSystemPage` (no layout), the Design System catalog described above
 
-Any unmatched route redirects to `/admin`. Route layouts (`AuthLayout`, `CharAdminLayout`) are lazy-loaded via `src/app.lazy.tsx` (`React.lazy`), and `src/main.tsx` wraps the app in a top-level `<Suspense>`. When adding a new layout, register its lazy import in `app.lazy.tsx` rather than importing it directly in the router.
+Every top-level route tree has `errorElement: <RouteErrorPage />` (`src/error/pages/`), shown when a screen throws or a lazy chunk fails to load.
+
+Any unmatched route redirects to `/admin`. Route layouts (`AuthLayout`, `CharAdminLayout`) **and screens** (`LoginPage`, `DashboardPage`, `ClientsPage`, `UsersPage`, `DesignSystemPage`) are lazy-loaded via `src/app.lazy.tsx` (`React.lazy`; screens keep their named export and are re-exported as `default` there). Both layouts wrap their `Outlet` in a `<Suspense>` (admin: `fallback={<PageSkeleton />}`) so navigating between screens doesn't unmount the frame, and `src/main.tsx` wraps the app in a top-level `<Suspense>`. When adding a new layout, register its lazy import in `app.lazy.tsx` rather than importing it directly in the router.
 
 `src/CharApp.tsx` just renders `<RouterProvider router={appRouter} />` and is mounted from `src/main.tsx`.
 
@@ -77,7 +80,15 @@ Some comments in the codebase (e.g. layout files) are written in Spanish; match 
 
 ### Auth / session
 
-`src/auth/store/auth.store.ts` (Zustand, persisted in `localStorage` as `auth-storage`) holds `access`/`refresh` tokens and the current user. `src/lib/charApi.ts` is the shared axios instance: it attaches the `access` token and, on a 401, refreshes once via `/auth/token/refresh/` and retries. The backend rotates and blacklists the refresh token on every refresh, so the new `refresh` returned must always be stored too (`setTokens(access, refresh)`) — saving only `access` logs the user out on the second renewal.
+`src/auth/store/auth.store.ts` (Zustand, persisted in `localStorage` as `auth-storage`) holds `access`/`refresh` tokens and the current user. `logout()` is async: it calls `POST /auth/logout/` (blacklists the refresh token, best-effort) and then clears the local session; `clearSession()` only clears the local session and is what the axios interceptor uses when the refresh fails. `src/lib/charApi.ts` is the shared axios instance: it attaches the `access` token and, on a 401 (except from `/auth/token/` and `/auth/token/refresh/`), refreshes once via `/auth/token/refresh/` and retries. The backend rotates and blacklists the refresh token on every refresh, so the new `refresh` returned must always be stored too (`setTokens(access, refresh)`) — saving only `access` logs the user out on the second renewal. The persisted session is validated once per page load: `ProtectedRoute` calls `verifySession()` (`GET /users/me/`) while `sessionVerified` (not persisted) is `false` and shows `AdminLayoutSkeleton` (a skeleton of the whole frame); a rejected session is cleared, an offline one is kept.
+
+`src/lib/queryClient.ts` holds the shared `QueryClient`: no retries on 4xx (only network/5xx, max 2) and `staleTime` of 30 s.
+
+### Listings
+
+Paginated listings (DRF `PageNumberPagination`, typed with `admin/interfaces/paginated.interface.ts` → `Paginated<T>`) keep `page`/`pageSize` in the screen state, pass them to the action and the `queryKey`, use `placeholderData: keepPreviousData` and go back to page 1 when the search, a filter or the page size changes (keep the page together with the criteria it was chosen for, as `UsersPage` does, so no request is sent with stale criteria). Render `components/char/pagination` below the list and cover the states with `components/char/state-message` (`error` with "Reintentar" / `empty`) and a skeleton (`components/char/skeleton`; e.g. `UsersListSkeleton`) for loading — prefer skeletons over spinners/"Cargando…" texts; dim the list while `isPlaceholderData`. See `admin/pages/users/UsersPage.tsx`. Searching is always `components/char/search-bar` (search field only) with the filters passed as `actions={<FiltersPopover … />}` (`components/char/filters-popover`, config-driven: chips, select, text, date, checkbox). `SearchBar` no longer has a collapsible "Más filtros" section — don't build filters by hand inside it.
+
+Admin navigation lives in `src/admin/config/admin-nav.ts` (single source for the sidebar and the header search `AdminSearch`). Toasts (`toast` from `@/components/char/sonner`) are tinted per type (`success`/`warning`/`error`/`info`) with the role tokens.
 
 ### Conventions
 

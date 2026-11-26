@@ -1,17 +1,22 @@
 import { createBrowserRouter, Navigate } from "react-router";
-import { DashboardPage } from "./admin/pages/dashboard/DashboardPage";
-import { ClientsPage } from "./admin/pages/clients/ClientsPage";
-import { LoginPage } from "./auth/pages/login/LoginPage";
-import { AuthLayout, CharAdminLayout } from "./app.lazy";
+import {
+  AuthLayout,
+  CharAdminLayout,
+  ClientsPage,
+  DashboardPage,
+  DesignSystemPage,
+  LoginPage,
+  UsersPage,
+} from "./app.lazy";
 import { ProtectedRoute } from "./auth/components/ProtectedRoute";
 import { PublicRoute } from "./auth/components/PublicRoute";
-import { UsersPage } from "./admin/pages/users/UsersPage";
-import { DesignSystemPage } from "./design-system/pages/DesignSystemPage";
+import { RouteErrorPage } from "./error/pages/RouteErrorPage";
 export const appRouter = createBrowserRouter([
   //Admin routes
   {
     path: "/admin",
     element: <ProtectedRoute />,
+    errorElement: <RouteErrorPage />,
     children: [
       {
         element: <CharAdminLayout />,
@@ -36,23 +41,25 @@ export const appRouter = createBrowserRouter([
   {
     path: "/design-system",
     element: <DesignSystemPage />,
+    errorElement: <RouteErrorPage />,
   },
   // redirije cualquier ruta que no exista a /admin
   {
     path: "*",
-    element: <Navigate to="/admin" />,
+    element: <Navigate to="/admin" replace />,
   },
   // Auth routes
   {
     path: "/auth",
     element: <PublicRoute />,
+    errorElement: <RouteErrorPage />,
     children: [
       {
         element: <AuthLayout />,
         children: [
           {
             index: true,
-            element: <Navigate to="/auth/login" />,
+            element: <Navigate to="/auth/login" replace />,
           },
           {
             path: "login",

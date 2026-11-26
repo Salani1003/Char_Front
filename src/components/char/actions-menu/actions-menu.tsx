@@ -26,13 +26,17 @@ export interface ActionsMenuItem {
  *
  * @param label Nombre accesible del botón (ej. "Acciones de María Pérez").
  * @param items Opciones del menú: `label`, `icon`, `onSelect` y `variant`.
+ * @param trigger Contenido del botón en lugar de los tres puntitos (ej. el
+ * avatar de la persona autenticada en el header).
  */
 export function ActionsMenu({
   label,
   items,
+  trigger,
 }: {
   label: string;
   items: ActionsMenuItem[];
+  trigger?: ReactNode;
 }) {
   return (
     <DropdownMenu>
@@ -46,7 +50,7 @@ export function ActionsMenu({
           />
         }
       >
-        <EllipsisVertical />
+        {trigger ?? <EllipsisVertical />}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         {items.map(({ label: itemLabel, icon, onSelect, variant }) => (

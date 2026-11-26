@@ -2,21 +2,23 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { AlertDialog } from "@/components/char/alert-dialog";
 import { Button } from "@/components/char/button";
-import { Label } from "@/components/char/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/char/select";
 import { SearchBar } from "@/components/char/search-bar";
 import { PageHeader } from "@/components/char/page-header";
+import { FiltersPopover } from "@/components/char/filters-popover";
+import type {
+  FilterDefinition,
+  FilterValues,
+} from "@/components/char/filters-popover";
+import { Pagination } from "@/components/char/pagination";
 import { toast } from "@/components/char/sonner";
+import { StateMessage } from "@/components/char/state-message";
 import { toApiError } from "@/lib/apiError";
+import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { UserCard } from "@/admin/components/UserCard";
 import { UserFormDialog } from "@/admin/components/UserFormDialog";
+import { UsersListSkeleton } from "@/admin/components/UsersListSkeleton";
 import { useGroups } from "@/admin/hooks/useGroups";
 import { useDeleteUser } from "@/admin/hooks/useDeleteUser";
 import { useUsers } from "@/admin/hooks/useUsers";
@@ -25,37 +27,59 @@ import { getUserFullName } from "@/admin/utils/getUserFullName";
 
 /**
  * Listado de usuarios (`/admin/users`): encabezado con "Nuevo usuario",
- * buscador con debounce, filtro de estado (activos por defecto) y una tarjeta por usuario. "Nuevo usuario" y la opción
+ * buscador con debounce, filtro de estado en un `FiltersPopover` (activos
+ * por defecto; "Todos" o "Limpiar" muestran todos), una tarjeta
+ * por usuario y paginación (`Pagination`; vuelve a la página 1 al buscar,
+ * filtrar o cambiar el tamaño). Cubre los estados de carga (esqueleto de tarjetas), error (con
+ * "Reintentar") y vacío con `StateMessage`. "Nuevo usuario" y la opción
  * "Editar" de cada tarjeta abren `UserFormDialog` (alta / edición); "Eliminar"
  * abre una confirmación y, si se acepta, elimina el usuario. Los errores del
  * backend al eliminar se muestran en una alerta.
  */
-type StatusFilter = "active" | "inactive" | "all";
+const USER_FILTERS: FilterDefinition[] = [
+  {
+    key: "status",
+    type: "chips",
+    label: "Estado",
+    options: [
+      { value: "active", label: "Activos" },
+      { value: "inactive", label: "Inactivos" },
+    ],
+  },
+];
 
-const STATUS_ITEMS: Record<StatusFilter, string> = {
-  active: "Activos",
-  inactive: "Inactivos",
-  all: "Todos",
-};
-
-const STATUS_PARAM: Record<StatusFilter, boolean | undefined> = {
+/** Estado de la API según el chip elegido; sin chip (o "Todos") trae todos. */
+const STATUS_PARAM: Record<string, boolean | undefined> = {
   active: true,
   inactive: false,
-  all: undefined,
 };
 
 export const UsersPage = () => {
+  useDocumentTitle("Usuarios · Char");
+  const [pageSize, setPageSize] = useState(20);
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState<StatusFilter>("active");
+  // Arranca mostrando solo los activos; "Todos" o "Limpiar" quitan el filtro.
+  const [filters, setFilters] = useState<FilterValues>({ status: "active" });
+  const status = filters.status ?? "";
   const [formOpen, setFormOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const debouncedSearch = useDebounce(search);
-  const { data } = useUsers({
-    search: debouncedSearch,
-    is_active: STATUS_PARAM[status],
-  });
+  // La página se guarda junto con los criterios con los que se eligió: si
+  // cambia la búsqueda (ya con debounce), el estado o el tamaño, vuelve a 1
+  // sin pedir antes una página con criterios viejos.
+  const criteria = `${debouncedSearch}|${status}|${pageSize}`;
+  const [pageState, setPageState] = useState({ criteria, page: 1 });
+  const page = pageState.criteria === criteria ? pageState.page : 1;
+  const setPage = (next: number) => setPageState({ criteria, page: next });
+  const { data, isPending, isError, error, isPlaceholderData, refetch } =
+    useUsers({
+      page,
+      page_size: pageSize,
+      search: debouncedSearch,
+      is_active: STATUS_PARAM[status],
+    });
   const { data: groups = [] } = useGroups();
   const { mutateAsync: deleteUser } = useDeleteUser();
 
@@ -74,6 +98,8 @@ export const UsersPage = () => {
     try {
       await deleteUser(userToDelete.id);
       toast.success("Usuario eliminado");
+      // Si era el único de la última página, volver a la anterior.
+      if (page > 1 && data?.results.length === 1) setPage(page - 1);
     } catch (error) {
       setDeleteError(toApiError(error).message);
     }
@@ -94,42 +120,67 @@ export const UsersPage = () => {
         value={search}
         onValueChange={setSearch}
         placeholder="Buscar por nombre, email o usuario…"
-        filters={
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="status-filter">Estado</Label>
-            <Select
-              items={STATUS_ITEMS}
-              value={status}
-              onValueChange={(value) => setStatus(value as StatusFilter)}
-            >
-              <SelectTrigger id="status-filter" className="w-full sm:w-48">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(STATUS_ITEMS).map(([value, label]) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        title="Buscar"
+        actions={
+          <FiltersPopover
+            filters={USER_FILTERS}
+            value={filters}
+            onChange={setFilters}
+          />
         }
       />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {data?.results.map((user) => (
-          <UserCard
-            key={user.id}
-            user={user}
-            roles={user.groups.flatMap((id) => {
-              const name = groups.find((g) => g.id === id)?.name;
-              return name ? [name] : [];
-            })}
-            onEdit={openEdit}
-            onDelete={setUserToDelete}
-          />
-        ))}
-      </div>
+      {isPending ? (
+        <div role="status">
+          <span className="sr-only">Cargando usuarios…</span>
+          <UsersListSkeleton />
+        </div>
+      ) : isError ? (
+        <StateMessage
+          variant="error"
+          action={
+            <Button variant="secondary" onClick={() => void refetch()}>
+              Reintentar
+            </Button>
+          }
+        >
+          {toApiError(error).message}
+        </StateMessage>
+      ) : data.results.length === 0 ? (
+        <StateMessage variant="empty">
+          {debouncedSearch || status
+            ? "No se encontraron usuarios con esos filtros."
+            : "Todavía no hay usuarios."}
+        </StateMessage>
+      ) : (
+        <div
+          className={cn(
+            "grid gap-4 transition-opacity sm:grid-cols-2 xl:grid-cols-3",
+            isPlaceholderData && "opacity-60",
+          )}
+        >
+          {data.results.map((user) => (
+            <UserCard
+              key={user.id}
+              user={user}
+              roles={user.groups.flatMap((id) => {
+                const name = groups.find((g) => g.id === id)?.name;
+                return name ? [name] : [];
+              })}
+              onEdit={openEdit}
+              onDelete={setUserToDelete}
+            />
+          ))}
+        </div>
+      )}
+      <Pagination
+        page={page}
+        pageSize={pageSize}
+        total={data?.count ?? 0}
+        itemLabel={{ singular: "usuario", plural: "usuarios" }}
+        disabled={isPlaceholderData}
+        onPageChange={setPage}
+        onPageSizeChange={setPageSize}
+      />
       <UserFormDialog
         open={formOpen}
         onOpenChange={setFormOpen}

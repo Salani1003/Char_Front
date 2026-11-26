@@ -29,6 +29,14 @@ import {
   SelectValue,
 } from "@/components/char/select";
 import { Textarea } from "@/components/char/textarea";
+import { CopyableId } from "@/components/char/copyable-id";
+import { FiltersPopover } from "@/components/char/filters-popover";
+import type { FilterValues } from "@/components/char/filters-popover";
+import { Pagination } from "@/components/char/pagination";
+import { Skeleton } from "@/components/char/skeleton";
+import { StateMessage } from "@/components/char/state-message";
+import { Switch } from "@/components/char/switch";
+import { toast } from "@/components/char/sonner";
 import { DocSection, DocSubheading } from "../components/DocSection";
 function Example({
   label,
@@ -53,6 +61,9 @@ function Example({
 export function ComponentsSection() {
   const [query, setQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [filters, setFilters] = useState<FilterValues>({});
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [alertVariant, setAlertVariant] =
     useState<CharAlertDialogVariant | null>(null);
   return (
@@ -403,6 +414,127 @@ export function ComponentsSection() {
               },
             ]}
           />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>Switch</DocSubheading>
+        <div className="flex flex-wrap gap-6">
+          <Example label="off">
+            <Switch aria-label="Apagado" />
+          </Example>
+          <Example label="on">
+            <Switch aria-label="Encendido" defaultChecked />
+          </Example>
+          <Example label="disabled">
+            <Switch aria-label="Deshabilitado" disabled />
+          </Example>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>FiltersPopover</DocSubheading>
+        <div>
+          <FiltersPopover
+            filters={[
+              {
+                key: "status",
+                type: "chips",
+                label: "Estado",
+                options: [
+                  { value: "active", label: "Activos" },
+                  { value: "inactive", label: "Inactivos" },
+                ],
+              },
+              { key: "since", type: "date", label: "Desde" },
+              { key: "verified", type: "checkbox", label: "Solo verificados" },
+            ]}
+            value={filters}
+            onChange={setFilters}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>Pagination</DocSubheading>
+        <Pagination
+          page={page}
+          pageSize={pageSize}
+          total={87}
+          itemLabel={{ singular: "usuario", plural: "usuarios" }}
+          onPageChange={setPage}
+          onPageSizeChange={(size) => {
+            setPage(1);
+            setPageSize(size);
+          }}
+        />
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>StateMessage</DocSubheading>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <StateMessage variant="loading">Cargando usuarios…</StateMessage>
+          <StateMessage variant="empty">
+            No se encontraron usuarios.
+          </StateMessage>
+          <StateMessage variant="error">
+            No se pudo conectar con el servidor.
+          </StateMessage>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>Skeleton</DocSubheading>
+        <div role="status" className="flex max-w-xs flex-col gap-3">
+          <span className="sr-only">Cargando…</span>
+          <div className="flex items-center gap-3">
+            <Skeleton className="size-10 shrink-0 rounded-full" />
+            <div className="flex flex-1 flex-col gap-2">
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-3 w-full" />
+            </div>
+          </div>
+          <Skeleton className="h-3 w-4/5" />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>CopyableId</DocSubheading>
+        <div>
+          <CopyableId value="PAY-8f3a1c92" />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>Toast</DocSubheading>
+        <div className="flex flex-wrap gap-3">
+          <Button variant="secondary" onClick={() => toast("Notificación")}>
+            default
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => toast.success("Cambios guardados")}
+          >
+            success
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => toast.info("Hay una novedad")}
+          >
+            info
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => toast.warning("Revisá los datos")}
+          >
+            warning
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => toast.error("No se pudo guardar")}
+          >
+            error
+          </Button>
         </div>
       </div>
     </DocSection>

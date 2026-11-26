@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Outlet } from "react-router";
 /**
  * Marco compartido por todas las pantallas de autenticación (login, recuperar
@@ -5,7 +6,8 @@ import { Outlet } from "react-router";
  * (logo + wordmark "Char Tienda" en Montserrat con la leyenda "GESTIÓN COMERCIAL")
  * y centra el contenido de la ruta (`Outlet`) a la derecha; por debajo de 900px
  * el panel de marca se oculta y el mismo bloque de logo + wordmark se muestra
- * compacto sobre el contenido.
+ * compacto sobre el contenido. La pantalla se carga lazy, así que el `Outlet`
+ * va dentro de un `Suspense`.
  */
 const AuthLayout = () => {
   return (
@@ -56,7 +58,9 @@ const AuthLayout = () => {
             </p>
           </div>
         </div>
-        <Outlet />
+        <Suspense fallback={null}>
+          <Outlet />
+        </Suspense>
       </div>
     </div>
   );
