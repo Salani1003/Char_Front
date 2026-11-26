@@ -25,6 +25,7 @@ import type { ProductModel } from "../interfaces/product-model.interface";
  * @param value Id del modelo elegido, o `null`.
  * @param brandId Id de la marca elegida; filtra la lista.
  * @param onChange Modelo elegido (con su `brand`) o `null`.
+ * @param initialOption Opción ya conocida para `value` (p. ej. al editar un producto, que ya trae los nombres): se muestra sin pedirla a la API.
  * @param onCreate Abre el alta de modelo con lo escrito (`""` desde el "+").
  */
 export function ProductModelCombobox({
@@ -32,6 +33,7 @@ export function ProductModelCombobox({
   brandId = null,
   onChange,
   onCreate,
+  initialOption,
   placeholder = "Buscá un modelo",
   ...rest
 }: {
@@ -39,6 +41,8 @@ export function ProductModelCombobox({
   brandId?: number | null;
   onChange: (model: ProductModel | null) => void;
   onCreate?: (query: string) => void;
+  /** Opción ya conocida para `value` (solo se usa para mostrar su etiqueta sin pedirla a la API). */
+  initialOption?: ProductModel;
   placeholder?: string;
   id?: string;
   onBlur?: () => void;
@@ -59,6 +63,7 @@ export function ProductModelCombobox({
   const needsDetail =
     value !== null &&
     picked?.id !== value &&
+    initialOption?.id !== value &&
     !list.data?.results.some((m) => m.id === value);
   const detail = useProductModel(needsDetail ? value : null);
 
@@ -67,6 +72,7 @@ export function ProductModelCombobox({
       ? null
       : ((picked?.id === value ? picked : null) ??
         list.data?.results.find((m) => m.id === value) ??
+        (initialOption?.id === value ? initialOption : null) ??
         detail.data ??
         null);
 

@@ -1,0 +1,1 @@
+export { FormMoneyInput } from "./FormMoneyInput";

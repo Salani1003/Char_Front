@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { Badge } from "@/components/char/badge";
 import { DataTable } from "@/components/char/data-table";
 import type { DataTableColumn } from "@/components/char/data-table";
@@ -6,12 +7,12 @@ import { VariantPrice } from "./VariantPrice";
 import type { ProductVariant } from "../interfaces/product-variant.interface";
 
 /**
- * Tabla de variantes de `CatalogPage`: SKU, producto (con categoría y marca/
+ * Tabla de variantes de `ProductsPage`: SKU, producto (enlace a su edición, con categoría y marca/
  * modelo debajo), color (con muestra), talle, precio vigente (`VariantPrice`)
  * y estado de publicación. Ordena por columna con los campos de la API
  * (`sku`, `product__name`, `color__name`, `size__order`, `effective_price`);
  * el precio ordena por `effective_price`, el que se ve. Es la vista de
- * escritorio: en celulares `CatalogPage` muestra `ProductVariantsCardList`.
+ * escritorio: en celulares `ProductsPage` muestra `ProductVariantsCardList`.
  *
  * @param variants Variantes de la página actual.
  * @param ordering Orden actual (`campo` o `-campo`; vacío = el del backend).
@@ -48,7 +49,12 @@ export function ProductVariantsTable({
       sortable: true,
       cell: (v) => (
         <div className="flex flex-col">
-          <span className="font-medium text-foreground">{v.product_name}</span>
+          <Link
+            to={`/admin/products/${v.product}`}
+            className="w-fit rounded-sm font-medium text-foreground underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            {v.product_name}
+          </Link>
           <span className="text-xs text-muted-foreground">
             {[v.category_label, v.brand_name, v.product_model_name]
               .filter(Boolean)

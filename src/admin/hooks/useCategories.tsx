@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 import {
   createCategoryAction,
+  getAllCategoriesAction,
   getCategoriesAction,
   getCategoryAction,
   type GetCategoriesParams,
@@ -27,6 +28,17 @@ export const useCategories = (
     queryKey: categoryKeys.list({ ...params }),
     queryFn: () => getCategoriesAction(params),
     placeholderData: keepPreviousData,
+    enabled,
+  });
+
+/** Todas las categorías que cumplen el filtro (ej. `{ root: true }`: las principales), en el orden de la API. */
+export const useAllCategories = (
+  params: Omit<GetCategoriesParams, "page" | "page_size"> = {},
+  { enabled = true }: { enabled?: boolean } = {},
+) =>
+  useQuery({
+    queryKey: categoryKeys.allPages({ ...params }),
+    queryFn: () => getAllCategoriesAction(params),
     enabled,
   });
 

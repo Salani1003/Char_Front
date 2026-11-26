@@ -1,12 +1,14 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import {
   AuthLayout,
-  CatalogPage,
   CharAdminLayout,
   ClientsPage,
   DashboardPage,
   DesignSystemPage,
   LoginPage,
+  ProductEditPage,
+  ProductNewPage,
+  ProductsPage,
   UsersPage,
 } from "./app.lazy";
 import { ProtectedRoute } from "./auth/components/ProtectedRoute";
@@ -33,17 +35,57 @@ export const appRouter = createBrowserRouter([
             element: <DashboardPage />,
           },
           {
+            // El antiguo Catálogo se unificó con Productos.
             path: "catalog",
+            element: <Navigate to="/admin/products" replace />,
+          },
+          {
+            path: "products",
             handle: {
-              crumb: navCrumb("/admin/catalog"),
+              crumb: navCrumb("/admin/products"),
             } satisfies AdminRouteHandle,
-            element: (
-              <RequirePermission
-                permission={PERMISSIONS.products.productVariant.view}
-              >
-                <CatalogPage />
-              </RequirePermission>
-            ),
+            children: [
+              {
+                index: true,
+                element: (
+                  <RequirePermission
+                    permission={PERMISSIONS.products.product.view}
+                  >
+                    <RequirePermission
+                      permission={PERMISSIONS.products.productVariant.view}
+                    >
+                      <ProductsPage />
+                    </RequirePermission>
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: "new",
+                handle: {
+                  crumb: () => ({ label: "Nuevo producto" }),
+                } satisfies AdminRouteHandle,
+                element: (
+                  <RequirePermission
+                    permission={PERMISSIONS.products.product.add}
+                  >
+                    <ProductNewPage />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: ":id",
+                handle: {
+                  crumb: () => ({ label: "Producto" }),
+                } satisfies AdminRouteHandle,
+                element: (
+                  <RequirePermission
+                    permission={PERMISSIONS.products.product.view}
+                  >
+                    <ProductEditPage />
+                  </RequirePermission>
+                ),
+              },
+            ],
           },
           {
             path: "clients",

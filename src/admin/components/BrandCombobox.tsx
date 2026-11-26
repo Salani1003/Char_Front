@@ -18,18 +18,22 @@ import type { Brand } from "../interfaces/brand.interface";
  *
  * @param value Id de la marca elegida, o `null`.
  * @param onChange Marca elegida o `null`.
+ * @param initialOption Opción ya conocida para `value` (p. ej. al editar un producto, que ya trae los nombres): se muestra sin pedirla a la API.
  * @param onCreate Abre el alta de marca con lo escrito (`""` desde el "+").
  */
 export function BrandCombobox({
   value,
   onChange,
   onCreate,
+  initialOption,
   placeholder = "Buscá una marca",
   ...rest
 }: {
   value: number | null;
   onChange: (brand: Brand | null) => void;
   onCreate?: (query: string) => void;
+  /** Opción ya conocida para `value` (solo se usa para mostrar su etiqueta sin pedirla a la API). */
+  initialOption?: Brand;
   placeholder?: string;
   id?: string;
   onBlur?: () => void;
@@ -45,6 +49,7 @@ export function BrandCombobox({
   const needsDetail =
     value !== null &&
     picked?.id !== value &&
+    initialOption?.id !== value &&
     !list.data?.results.some((b) => b.id === value);
   const detail = useBrand(needsDetail ? value : null);
 
@@ -53,6 +58,7 @@ export function BrandCombobox({
       ? null
       : ((picked?.id === value ? picked : null) ??
         list.data?.results.find((b) => b.id === value) ??
+        (initialOption?.id === value ? initialOption : null) ??
         detail.data ??
         null);
 

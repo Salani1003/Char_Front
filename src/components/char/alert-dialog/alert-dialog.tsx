@@ -50,7 +50,9 @@ export type CharAlertDialogVariant = keyof typeof VARIANTS;
  * @param title Título corto que dice qué pasó o qué se va a hacer.
  * @param description Detalle adicional.
  * @param confirmLabel Texto del botón de aceptar; por defecto "Aceptar".
- * @param onConfirm Se llama al aceptar; el diálogo se cierra después.
+ * @param onConfirm Se llama al aceptar; el diálogo se cierra después (salvo con `closeOnConfirm={false}`).
+ * @param closeOnConfirm Si es `false`, aceptar NO cierra el diálogo: lo cierra la pantalla (ej. al terminar una request, o dejarlo abierto mostrando un error en `description`). Por defecto `true`.
+ * @param confirmDisabled Deshabilita el botón de aceptar (ej. mientras corre la request).
  * @param cancelLabel Si se pasa, muestra el botón de cancelar con ese texto.
  * @param onCancel Se llama al cancelar con el botón.
  */
@@ -62,6 +64,8 @@ export function AlertDialog({
   description,
   confirmLabel = "Aceptar",
   onConfirm,
+  closeOnConfirm = true,
+  confirmDisabled = false,
   cancelLabel,
   onCancel,
 }: {
@@ -72,6 +76,8 @@ export function AlertDialog({
   description?: ReactNode;
   confirmLabel?: string;
   onConfirm?: () => void;
+  closeOnConfirm?: boolean;
+  confirmDisabled?: boolean;
   cancelLabel?: string;
   onCancel?: () => void;
 }) {
@@ -103,12 +109,30 @@ export function AlertDialog({
               {cancelLabel}
             </AlertDialogClose>
           ) : null}
-          <AlertDialogClose
-            render={<Button variant={button} className="sm:min-w-28" />}
-            onClick={onConfirm}
-          >
-            {confirmLabel}
-          </AlertDialogClose>
+          {closeOnConfirm ? (
+            <AlertDialogClose
+              render={
+                <Button
+                  variant={button}
+                  className="sm:min-w-28"
+                  disabled={confirmDisabled}
+                />
+              }
+              onClick={onConfirm}
+            >
+              {confirmLabel}
+            </AlertDialogClose>
+          ) : (
+            <Button
+              type="button"
+              variant={button}
+              className="sm:min-w-28"
+              disabled={confirmDisabled}
+              onClick={onConfirm}
+            >
+              {confirmLabel}
+            </Button>
+          )}
         </div>
       </AlertDialogContent>
     </BaseAlertDialog>

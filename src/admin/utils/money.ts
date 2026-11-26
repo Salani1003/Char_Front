@@ -51,3 +51,18 @@ export function formatMoney(value: string): string {
   const cents = decimals.slice(0, 2).padEnd(2, "0");
   return `${sign}$ ${groupThousands(integer.replace(/^0+(?=\d)/, ""))},${cents}`;
 }
+
+/**
+ * Compara dos decimales de la API (`"90000.00"`) sin pasar por floats.
+ * Devuelve un número negativo si `a < b`, 0 si son iguales y positivo si
+ * `a > b`. Ambos deben ser decimales válidos con hasta 2 decimales (ej. la
+ * salida de `parseMoney`).
+ */
+export function compareMoney(a: string, b: string): number {
+  const toCents = (value: string) => {
+    const [integer, decimals = ""] = value.split(".");
+    return BigInt(integer + decimals.padEnd(2, "0").slice(0, 2));
+  };
+  const diff = toCents(a) - toCents(b);
+  return diff < 0n ? -1 : diff > 0n ? 1 : 0;
+}

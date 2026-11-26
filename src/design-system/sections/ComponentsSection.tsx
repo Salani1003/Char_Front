@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Pencil, Search, Trash2 } from "lucide-react";
 import { ActionsMenu } from "@/components/char/actions-menu";
 import { AlertDialog } from "@/components/char/alert-dialog";
@@ -20,6 +21,7 @@ import { Dialog } from "@/components/char/dialog";
 import { EntityCard } from "@/components/char/entity-card";
 import { Input } from "@/components/char/input";
 import { Label } from "@/components/char/label";
+import { Notice } from "@/components/char/notice";
 import { PageHeader, PageHeaderAction } from "@/components/char/page-header";
 import { SearchBar } from "@/components/char/search-bar";
 import { RadioGroup, RadioGroupItem } from "@/components/char/radio-group";
@@ -38,8 +40,16 @@ import type { FilterValues } from "@/components/char/filters-popover";
 import { Pagination } from "@/components/char/pagination";
 import { Skeleton } from "@/components/char/skeleton";
 import { StateMessage } from "@/components/char/state-message";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/char/tabs";
 import { Switch } from "@/components/char/switch";
 import { toast } from "@/components/char/sonner";
+import { FormInput } from "@/components/forms/FormInput";
+import { FormMoneyInput } from "@/components/forms/FormMoneyInput";
 import { DocSection, DocSubheading } from "../components/DocSection";
 function Example({
   label,
@@ -105,6 +115,42 @@ function ComboboxDemo({
     </div>
   );
 }
+/** Ejemplos de los campos de formulario de dinero y con prefijo (`FormMoneyInput`, `FormInput prefix`). */
+function FormFieldsDemo() {
+  const { control } = useForm({
+    defaultValues: { price: "90.000,00", empty: "", slug: "" },
+  });
+  return (
+    <div className="flex flex-wrap gap-6">
+      <div className="w-60">
+        <FormMoneyInput
+          label="Precio de venta"
+          name="price"
+          control={control}
+          required
+          description="Acepta 90.000,00; se envía como 90000.00"
+        />
+      </div>
+      <div className="w-60">
+        <FormMoneyInput
+          label="Precio de costo"
+          name="empty"
+          control={control}
+        />
+      </div>
+      <div className="w-72">
+        <FormInput
+          label="Dirección (slug)"
+          name="slug"
+          control={control}
+          prefix="/productos/"
+          placeholder="vestido-largo"
+        />
+      </div>
+    </div>
+  );
+}
+
 /**
  * Documenta los componentes reutilizables del Design System de Char
  * (`src/components/char`), con sus variantes, tamaños y estados. Son
@@ -365,6 +411,49 @@ export function ComponentsSection() {
         </div>
       </div>
       <div className="flex flex-col gap-3">
+        <DocSubheading>Notice</DocSubheading>
+        <div className="flex max-w-xl flex-col gap-3">
+          <Notice variant="info">Aviso informativo.</Notice>
+          <Notice variant="success">La operación se completó.</Notice>
+          <Notice variant="warning" title="Atención">
+            Este producto está publicado.
+          </Notice>
+          <Notice variant="danger">No se pudo completar la acción.</Notice>
+        </div>
+      </div>
+      <div className="flex flex-col gap-3">
+        <DocSubheading>Tabs</DocSubheading>
+        <div className="flex flex-wrap gap-6">
+          <Example label="con cantidad (← → para recorrer)">
+            <Tabs defaultValue="data" className="w-96 max-w-full">
+              <TabsList aria-label="Ejemplo de pestañas">
+                <TabsTrigger value="data">Datos y precios</TabsTrigger>
+                <TabsTrigger value="variants">
+                  Variantes <Badge variant="secondary">12</Badge>
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="data">
+                Contenido de datos y precios.
+              </TabsContent>
+              <TabsContent value="variants">
+                Contenido de variantes.
+              </TabsContent>
+            </Tabs>
+          </Example>
+          <Example label="con una pestaña deshabilitada">
+            <Tabs defaultValue="a" className="w-96 max-w-full">
+              <TabsList aria-label="Ejemplo con pestaña deshabilitada">
+                <TabsTrigger value="a">Primera</TabsTrigger>
+                <TabsTrigger value="b" disabled>
+                  Deshabilitada
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="a">Primera.</TabsContent>
+            </Tabs>
+          </Example>
+        </div>
+      </div>
+      <div className="flex flex-col gap-3">
         <DocSubheading>Card</DocSubheading>
         <div className="flex flex-wrap items-start gap-6">
           <Card className="w-72">
@@ -503,6 +592,11 @@ export function ComponentsSection() {
             ]}
           />
         </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>Campos de dinero y con prefijo</DocSubheading>
+        <FormFieldsDemo />
       </div>
 
       <div className="flex flex-col gap-3">

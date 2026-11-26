@@ -17,11 +17,6 @@ export const DashboardPage = lazy(() =>
     default: m.DashboardPage,
   })),
 );
-export const CatalogPage = lazy(() =>
-  import("./admin/pages/catalog/CatalogPage").then((m) => ({
-    default: m.CatalogPage,
-  })),
-);
 export const ClientsPage = lazy(() =>
   import("./admin/pages/clients/ClientsPage").then((m) => ({
     default: m.ClientsPage,
@@ -30,6 +25,21 @@ export const ClientsPage = lazy(() =>
 export const UsersPage = lazy(() =>
   import("./admin/pages/users/UsersPage").then((m) => ({
     default: m.UsersPage,
+  })),
+);
+export const ProductsPage = lazy(() =>
+  import("./admin/pages/products/ProductsPage").then((m) => ({
+    default: m.ProductsPage,
+  })),
+);
+export const ProductNewPage = lazy(() =>
+  import("./admin/pages/products/ProductNewPage").then((m) => ({
+    default: m.ProductNewPage,
+  })),
+);
+export const ProductEditPage = lazy(() =>
+  import("./admin/pages/products/ProductEditPage").then((m) => ({
+    default: m.ProductEditPage,
   })),
 );
 export const DesignSystemPage = lazy(() =>

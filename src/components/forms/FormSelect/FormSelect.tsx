@@ -12,6 +12,8 @@ import {
 export interface SelectOption {
   value: string;
   label: string;
+  /** Si es `true` la opción se ve pero no se puede elegir. */
+  disabled?: boolean;
 }
 
 /**
@@ -23,7 +25,7 @@ export interface SelectOption {
  * @param label Texto mostrado sobre el desplegable.
  * @param name Nombre del campo dentro del formulario (su valor debe ser `string`).
  * @param control Instancia de `control` devuelta por `useForm`.
- * @param options Opciones disponibles (`value` + `label`).
+ * @param options Opciones disponibles (`value` + `label`; `disabled` las muestra sin permitir elegirlas).
  * @param placeholder Texto mostrado mientras no hay una opción elegida.
  */
 export function FormSelect<TFieldValues extends FieldValues>({
@@ -63,7 +65,11 @@ export function FormSelect<TFieldValues extends FieldValues>({
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              disabled={option.disabled}
+            >
               {option.label}
             </SelectItem>
           ))}

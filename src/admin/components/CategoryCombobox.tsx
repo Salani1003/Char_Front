@@ -23,18 +23,22 @@ const getGroup = (category: Category) => category.parent_name ?? category.name;
  *
  * @param value Id de la categoría elegida, o `null`.
  * @param onChange Categoría elegida o `null`.
+ * @param initialOption Opción ya conocida para `value` (p. ej. al editar un producto, que ya trae los nombres): se muestra sin pedirla a la API.
  * @param onCreate Abre el alta de categoría con lo escrito (`""` desde el "+").
  */
 export function CategoryCombobox({
   value,
   onChange,
   onCreate,
+  initialOption,
   placeholder = "Buscá una categoría",
   ...rest
 }: {
   value: number | null;
   onChange: (category: Category | null) => void;
   onCreate?: (query: string) => void;
+  /** Opción ya conocida para `value` (solo se usa para mostrar su etiqueta sin pedirla a la API). */
+  initialOption?: Category;
   placeholder?: string;
   id?: string;
   onBlur?: () => void;
@@ -50,6 +54,7 @@ export function CategoryCombobox({
   const needsDetail =
     value !== null &&
     picked?.id !== value &&
+    initialOption?.id !== value &&
     !list.data?.results.some((c) => c.id === value);
   const detail = useCategory(needsDetail ? value : null);
 
@@ -58,6 +63,7 @@ export function CategoryCombobox({
       ? null
       : ((picked?.id === value ? picked : null) ??
         list.data?.results.find((c) => c.id === value) ??
+        (initialOption?.id === value ? initialOption : null) ??
         detail.data ??
         null);
 

@@ -1,21 +1,15 @@
 import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
-import { Link } from "react-router";
-import { Can } from "@/auth/components/Can";
-import { PERMISSIONS } from "@/auth/lib/permissions";
 import { Button } from "@/components/char/button";
 import { FiltersPopover } from "@/components/char/filters-popover";
 import type {
   FilterDefinition,
   FilterValues,
 } from "@/components/char/filters-popover";
-import { PageHeader } from "@/components/char/page-header";
 import { Pagination } from "@/components/char/pagination";
 import { SearchBar } from "@/components/char/search-bar";
 import { StateMessage } from "@/components/char/state-message";
 import { toApiError } from "@/lib/apiError";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { ProductVariantsCardList } from "@/admin/components/ProductVariantsCardList";
 import { ProductVariantsTable } from "@/admin/components/ProductVariantsTable";
 import {
@@ -34,9 +28,12 @@ const toOptions = (items: CatalogLookup[] | undefined) =>
   }));
 
 /**
- * Grilla del catálogo (`/admin/catalog`): lista las variantes activas
- * (producto + color + talle) con nombres y precios ya resueltos
- * (`GET /product-variants/`; requiere `products.view_productvariant`).
+ * Vista "Variantes" de `ProductsPage`: una fila por **variante** de producto
+ * (SKU, producto, color, talle, precio vigente y estado) con nombres y
+ * precios ya resueltos (`GET /product-variants/`; requiere
+ * `products.view_productvariant`). El nombre de cada fila lleva a la edición
+ * de su producto. No muestra productos sin variantes: para eso está la vista
+ * "Productos" (`ProductsList`).
  *
  * Tiene buscador (SKU, producto, marca, modelo, color o talle; con debounce de
  * 300 ms) y un `FiltersPopover` con categoría (solo asignables), marca, modelo
@@ -49,11 +46,9 @@ const toOptions = (items: CatalogLookup[] | undefined) =>
  * Todos los criterios (búsqueda, filtros, orden, página y tamaño) viven en la
  * URL (`useCatalogSearchParams`) y cualquier cambio vuelve a la página 1.
  * Cubre carga, error (con "Reintentar") y vacío con `StateMessage`; el listado
- * se atenúa mientras `isPlaceholderData`. Con `products.add_product` muestra "Agregar
- * producto", que lleva a `/admin/products/new`.
+ * se atenúa mientras `isPlaceholderData`.
  */
-export const CatalogPage = () => {
-  useDocumentTitle("Catálogo · Char");
+export const ProductVariantsList = () => {
   const { criteria, page, setCriteria, setPage } = useCatalogSearchParams();
   const { search: urlSearch, filters } = criteria;
 
@@ -177,20 +172,6 @@ export const CatalogPage = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader
-        title="Catálogo"
-        description="Explorá las variantes de producto: color, talle y precio vigente."
-        actions={
-          <Can permission={PERMISSIONS.products.product.add}>
-            <Button
-              render={<Link to="/admin/products/new" />}
-              nativeButton={false}
-            >
-              <Plus /> Agregar producto
-            </Button>
-          </Can>
-        }
-      />
       <SearchBar
         value={search}
         onValueChange={setSearch}

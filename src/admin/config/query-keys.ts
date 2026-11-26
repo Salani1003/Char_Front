@@ -27,6 +27,7 @@ export const sizeKeys = catalogKeys("sizes");
 
 export const productKeys = {
   all: ["products"] as const,
+  list: (params: ListParams = {}) => ["products", "list", params] as const,
   detail: (id: number | null) => ["products", "detail", id] as const,
   withVariants: (id: number | null) =>
     ["products", "with-variants", id] as const,

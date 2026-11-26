@@ -80,7 +80,8 @@ export const DashboardPage = () => {
                 <span
                   aria-hidden
                   className={cn(
-                    "absolute inset-x-0 top-0 h-px origin-left scale-x-25 bg-(--char-brand-gold) transition-transform duration-(--duration-slower) ease-(--ease-standard) group-hover:scale-x-100",
+                    "absolute inset-x-0 top-0 origin-left scale-x-25 bg-(--char-brand-gold) transition-transform duration-(--duration-slower) ease-(--ease-standard) group-hover:scale-x-100",
+                    featured ? "h-0.5 rounded-t-card" : "h-px",
                   )}
                 />
                 <div className="flex items-center justify-between">

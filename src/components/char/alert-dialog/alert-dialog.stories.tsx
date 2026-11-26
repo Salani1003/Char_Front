@@ -56,3 +56,16 @@ export const WithCancel: Story = {
     cancelLabel: "Cancelar",
   },
 };
+
+/** `closeOnConfirm={false}`: aceptar no cierra el diálogo (ej. para mostrar el error de la request en la descripción). */
+export const KeepsOpenOnConfirm: Story = {
+  args: {
+    variant: "danger",
+    title: "¿Eliminar «Vestido rojo»?",
+    description:
+      "No se puede eliminar un producto con variantes activas. Eliminá primero sus variantes.",
+    confirmLabel: "Eliminar",
+    cancelLabel: "Cancelar",
+    closeOnConfirm: false,
+  },
+};

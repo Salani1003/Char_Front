@@ -29,7 +29,19 @@ export interface Product {
   current_price: string;
   /** Calculado (solo lectura). */
   is_on_promo: boolean;
+  /** Cantidad de variantes activas (la ve cualquiera que vea productos). */
+  variants_count: number;
   created_at: string;
+}
+
+/**
+ * Producto tal como lo devuelve `GET /products/` (listado): suma `variants`,
+ * las variantes activas ya ordenadas por color y talle. El campo solo existe
+ * con `products.view_productvariant` (sin el permiso se omite). El detalle
+ * (`GET /products/:id/`) no lo incluye.
+ */
+export interface ProductListItem extends Product {
+  variants?: ProductVariantItem[];
 }
 
 /** Variante dentro de `GET /products/:id/with-variants/`, con color y talle anidados. */

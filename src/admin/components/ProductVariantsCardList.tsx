@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { ArrowDown, ArrowUp, Palette, Ruler, Tag } from "lucide-react";
 import { Badge } from "@/components/char/badge";
 import { Button } from "@/components/char/button";
@@ -134,6 +135,17 @@ export function ProductVariantsCardList({
                   value: <VariantPrice variant={v} />,
                 },
               ]}
+              actions={
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  render={<Link to={`/admin/products/${v.product}`} />}
+                  nativeButton={false}
+                  aria-label={`Ver producto ${v.product_name}`}
+                >
+                  Ver producto
+                </Button>
+              }
             />
           ))}
         </div>
