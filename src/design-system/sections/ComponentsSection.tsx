@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/char/card";
 import { Checkbox } from "@/components/char/checkbox";
+import { Combobox } from "@/components/char/combobox";
 import { DataTable } from "@/components/char/data-table";
 import { Dialog } from "@/components/char/dialog";
 import { EntityCard } from "@/components/char/entity-card";
@@ -51,6 +52,56 @@ function Example({
     <div className="flex flex-col items-start gap-2">
       <div className="flex min-h-9 items-center">{children}</div>
       <span className="text-xs text-muted-foreground">{label}</span>
+    </div>
+  );
+}
+
+interface DemoOption {
+  id: number;
+  label: string;
+  group: string;
+}
+const DEMO_OPTIONS: DemoOption[] = [
+  { id: 1, label: "Indumentaria › Blazers", group: "Indumentaria" },
+  { id: 2, label: "Indumentaria › Blusas", group: "Indumentaria" },
+  { id: 3, label: "Vestidos › Cortos", group: "Vestidos" },
+  { id: 4, label: "Vestidos › Largos", group: "Vestidos" },
+];
+/** Instancia de ejemplo del `Combobox` (modo local) para el catálogo. */
+function ComboboxDemo({
+  initial = null,
+  withCreate,
+  loading,
+  error,
+  disabled,
+}: {
+  initial?: DemoOption | null;
+  withCreate?: boolean;
+  loading?: boolean;
+  error?: string;
+  disabled?: boolean;
+}) {
+  const [value, setValue] = useState<DemoOption | null>(initial);
+  return (
+    <div className="w-72">
+      <Combobox<DemoOption>
+        aria-label="Categoría de ejemplo"
+        value={value}
+        onChange={setValue}
+        options={loading ? [] : DEMO_OPTIONS}
+        getOptionKey={(o) => o.id}
+        getOptionLabel={(o) => o.label}
+        getOptionGroup={(o) => o.group}
+        placeholder="Buscá una categoría"
+        clearable
+        loading={loading}
+        error={error}
+        disabled={disabled}
+        onCreate={withCreate ? () => {} : undefined}
+        createLabel={(q) => `Crear categoría «${q}»`}
+        createButtonLabel="Nueva categoría"
+        emptyMessage={(q) => `No hay categorías que coincidan con «${q}»`}
+      />
     </div>
   );
 }
@@ -156,6 +207,29 @@ export function ComponentsSection() {
             <Label htmlFor="ds-label-required" required>
               Email
             </Label>
+          </Example>
+        </div>
+      </div>
+      <div className="flex flex-col gap-3">
+        <DocSubheading>Combobox</DocSubheading>
+        <div className="flex flex-wrap gap-6">
+          <Example label="con resultados agrupados (escribí «la»)">
+            <ComboboxDemo />
+          </Example>
+          <Example label="con «+» y fila «Crear…»">
+            <ComboboxDemo withCreate />
+          </Example>
+          <Example label="con valor elegido">
+            <ComboboxDemo initial={DEMO_OPTIONS[3]} />
+          </Example>
+          <Example label="cargando">
+            <ComboboxDemo loading />
+          </Example>
+          <Example label="error">
+            <ComboboxDemo error="Elegí una categoría" />
+          </Example>
+          <Example label="disabled">
+            <ComboboxDemo disabled initial={DEMO_OPTIONS[3]} />
           </Example>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import {
   AuthLayout,
+  CatalogPage,
   CharAdminLayout,
   ClientsPage,
   DashboardPage,
@@ -30,6 +31,19 @@ export const appRouter = createBrowserRouter([
           {
             index: true,
             element: <DashboardPage />,
+          },
+          {
+            path: "catalog",
+            handle: {
+              crumb: navCrumb("/admin/catalog"),
+            } satisfies AdminRouteHandle,
+            element: (
+              <RequirePermission
+                permission={PERMISSIONS.products.productVariant.view}
+              >
+                <CatalogPage />
+              </RequirePermission>
+            ),
           },
           {
             path: "clients",

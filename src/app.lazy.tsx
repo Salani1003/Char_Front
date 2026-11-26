@@ -17,6 +17,11 @@ export const DashboardPage = lazy(() =>
     default: m.DashboardPage,
   })),
 );
+export const CatalogPage = lazy(() =>
+  import("./admin/pages/catalog/CatalogPage").then((m) => ({
+    default: m.CatalogPage,
+  })),
+);
 export const ClientsPage = lazy(() =>
   import("./admin/pages/clients/ClientsPage").then((m) => ({
     default: m.ClientsPage,

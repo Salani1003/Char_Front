@@ -1,6 +1,15 @@
 import { useAuthStore } from "../store/auth.store";
 import type { CurrentUser } from "@/admin/interfaces/user.interface";
 
+/** Arma las cuatro cadenas `<app>.<accion>_<modelo>` de un modelo. */
+const crud = <A extends string, M extends string>(app: A, model: M) =>
+  ({
+    view: `${app}.view_${model}`,
+    add: `${app}.add_${model}`,
+    change: `${app}.change_${model}`,
+    delete: `${app}.delete_${model}`,
+  }) as const;
+
 /**
  * Permisos de Django (`<app>.<accion>_<modelo>`) que usa el front. Es el único
  * lugar donde se escriben: el resto del código los referencia desde acá.
@@ -17,6 +26,17 @@ export const PERMISSIONS = {
     add: "users.add_user",
     change: "users.change_user",
     delete: "users.delete_user",
+  },
+  products: {
+    category: crud("products", "category"),
+    brand: crud("products", "brand"),
+    productModel: crud("products", "productmodel"),
+    color: crud("products", "color"),
+    size: crud("products", "size"),
+    product: crud("products", "product"),
+    productVariant: crud("products", "productvariant"),
+    /** Ver y editar el precio de costo de un producto. */
+    costPrice: "products.view_cost_price",
   },
   groups: {
     view: "auth.view_group",
