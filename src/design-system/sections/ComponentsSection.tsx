@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/char/select";
 import { Textarea } from "@/components/char/textarea";
+import { Breadcrumb } from "@/components/char/breadcrumb";
 import { CopyableId } from "@/components/char/copyable-id";
 import { FiltersPopover } from "@/components/char/filters-popover";
 import type { FilterValues } from "@/components/char/filters-popover";
@@ -318,6 +319,17 @@ export function ComponentsSection() {
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>Breadcrumb</DocSubheading>
+        <Breadcrumb
+          items={[
+            { label: "Inicio", to: "/admin" },
+            { label: "Usuarios", to: "/admin/users" },
+            { label: "María Pérez" },
+          ]}
+        />
       </div>
 
       <div className="flex flex-col gap-3">

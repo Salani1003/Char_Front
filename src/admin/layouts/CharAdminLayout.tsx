@@ -19,6 +19,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/char/tooltip";
+import { AdminBreadcrumb } from "../components/AdminBreadcrumb";
 import { AdminSearch } from "../components/AdminSearch";
 import { PageSkeleton } from "../components/PageSkeleton";
 import { UserInfoDialog } from "../components/UserInfoDialog";
@@ -36,7 +37,8 @@ import { getUserFullName } from "../utils/getUserFullName";
  * nombre y apellido — o su email si no los tiene —, con un menú que se abre desde un chevron `v` a su lado:
  * "Mi información" — modal `UserInfoDialog` con los datos de la cuenta — y
  * "Cerrar sesión", que invalida el refresh token en el backend), dejando el
- * contenido de la ruta activa (`Outlet`) en el área principal. Las pantallas
+ * contenido de la ruta activa (`Outlet`) en el área principal, precedido por
+ * las migas de pan (`AdminBreadcrumb`). Las pantallas
  * se cargan lazy (`app.lazy.tsx`), así que el `Outlet` va dentro de un
  * `Suspense` que muestra `PageSkeleton` sin desmontar el marco.
  *
@@ -216,6 +218,7 @@ const CharAdminLayout = () => {
           </div>
         </header>
         <main className="min-w-0 flex-1 overflow-y-auto p-5 md:p-8">
+          <AdminBreadcrumb />
           <Suspense fallback={<PageSkeleton />}>
             <Outlet />
           </Suspense>
