@@ -145,11 +145,11 @@ export function ProductVariantsPanel({
 
   const renderSizeGroup = (title: string, group: Size[]) =>
     group.length === 0 ? null : (
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
           {title}
         </p>
-        <div className="flex flex-wrap gap-x-6 gap-y-2.5">
+        <div className="flex flex-wrap gap-x-8 gap-y-4">
           {group.map((size) => {
             const id = `${uid}-size-${size.id}`;
             return (
@@ -176,7 +176,7 @@ export function ProductVariantsPanel({
       value={colorId === null ? "" : String(colorId)}
       onValueChange={(value) => setColorId(Number(value))}
       disabled={running}
-      className="flex flex-wrap gap-x-6 gap-y-2.5"
+      className="flex flex-wrap gap-x-8 gap-y-4"
     >
       {list.map((color) => {
         const id = `${uid}-color-${color.id}`;
@@ -197,7 +197,7 @@ export function ProductVariantsPanel({
   );
 
   return (
-    <Card>
+    <Card className="[--card-spacing:--spacing(6)]">
       <CardHeader>
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col gap-1">
@@ -219,11 +219,11 @@ export function ProductVariantsPanel({
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-6">
-        <fieldset className="flex flex-col gap-3">
+      <CardContent className="flex flex-col gap-9">
+        <fieldset className="flex flex-col gap-4">
           <legend
             id={`${uid}-color-legend`}
-            className="mb-1 text-sm font-medium"
+            className="mb-1 text-base font-semibold"
           >
             1. Color (uno por vez)
           </legend>
@@ -259,7 +259,7 @@ export function ProductVariantsPanel({
             <div>
               <Button
                 type="button"
-                variant="secondary"
+                variant="magenta"
                 size="sm"
                 disabled={running}
                 onClick={() => setDialog("color")}
@@ -270,8 +270,8 @@ export function ProductVariantsPanel({
           ) : null}
         </fieldset>
 
-        <fieldset className="flex flex-col gap-3">
-          <legend className="mb-1 text-sm font-medium">
+        <fieldset className="flex flex-col gap-4">
+          <legend className="mb-1 text-base font-semibold">
             2. Talles (uno o varios)
           </legend>
           {!canViewSizes ? (
@@ -298,7 +298,7 @@ export function ProductVariantsPanel({
               Todavía no hay talles cargados.
             </p>
           ) : (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-5">
               {renderSizeGroup("Letras", sizeGroups.letters)}
               {renderSizeGroup("Números", sizeGroups.numbers)}
             </div>
@@ -307,7 +307,7 @@ export function ProductVariantsPanel({
             <div>
               <Button
                 type="button"
-                variant="secondary"
+                variant="magenta"
                 size="sm"
                 disabled={running}
                 onClick={() => setDialog("size")}
@@ -318,8 +318,8 @@ export function ProductVariantsPanel({
           ) : null}
         </fieldset>
 
-        <section aria-live="polite" className="flex flex-col gap-3">
-          <h3 className="font-sans text-sm font-medium">Vista previa</h3>
+        <section aria-live="polite" className="flex flex-col gap-4">
+          <h3 className="font-sans text-base font-semibold">Vista previa</h3>
           {preview.items.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               Todavía no elegiste color ni talles. Elegí un color y al menos un
@@ -332,7 +332,7 @@ export function ProductVariantsPanel({
                   ? "No hay variantes nuevas para crear."
                   : `Se van a crear ${variantsText(toCreateCount)}`}
               </p>
-              <ul className="flex flex-col gap-2">
+              <ul className="flex flex-col gap-3">
                 {preview.items.map((item) => {
                   const failure = failures.get(item.key);
                   return (

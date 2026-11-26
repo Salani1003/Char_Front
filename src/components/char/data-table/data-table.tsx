@@ -95,7 +95,7 @@ export function DataTable<T>({
       >
         <caption className="sr-only">{caption}</caption>
         <thead>
-          <tr className="border-b border-border bg-surface-app">
+          <tr className="border-b-2 border-(--char-brand-gold) bg-linear-to-r from-sidebar to-[color-mix(in_oklch,var(--color-sidebar),black_18%)]">
             {columns.map((column) => {
               const sort = column.sortable
                 ? getSortState(ordering, column.key)
@@ -112,7 +112,7 @@ export function DataTable<T>({
                   scope="col"
                   aria-sort={sort}
                   className={cn(
-                    "px-(--pad-table-cell-x) py-3 font-semibold text-muted-foreground",
+                    "px-(--pad-table-cell-x) py-3 text-xs font-semibold tracking-wider text-(--char-cream-200) uppercase",
                     column.align === "right" ? "text-right" : "text-left",
                     column.className,
                   )}
@@ -122,8 +122,8 @@ export function DataTable<T>({
                       type="button"
                       onClick={() => toggleSort(column.key)}
                       className={cn(
-                        "-mx-1.5 inline-flex items-center gap-1.5 rounded-sm px-1.5 py-0.5 font-semibold transition-colors outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
-                        sort !== "none" && "text-foreground",
+                        "-mx-1.5 inline-flex items-center gap-1.5 rounded-sm px-1.5 py-0.5 font-semibold tracking-wider uppercase transition-colors outline-none hover:text-(--char-brand-gold) focus-visible:ring-3 focus-visible:ring-ring/50",
+                        sort !== "none" && "text-(--char-brand-gold)",
                       )}
                     >
                       {column.header}
@@ -176,13 +176,13 @@ export function DataTable<T>({
             : rows.map((row) => (
                 <tr
                   key={getRowKey(row)}
-                  className="border-b border-border-soft transition-colors last:border-b-0 hover:bg-surface-app"
+                  className="group/row border-b border-border-soft transition-[background-size] last:border-b-0 bg-linear-to-r from-accent to-transparent bg-size-[0%_100%] bg-no-repeat hover:bg-size-[100%_100%]"
                 >
                   {columns.map((column) => (
                     <td
                       key={column.key}
                       className={cn(
-                        "px-(--pad-table-cell-x) py-(--pad-table-cell-y) text-foreground",
+                        "px-(--pad-table-cell-x) py-(--pad-table-cell-y) text-foreground transition-shadow first:group-hover/row:shadow-[inset_3px_0_0_var(--primary)]",
                         column.align === "right" && "text-right",
                         column.className,
                       )}

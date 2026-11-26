@@ -68,7 +68,7 @@ export function ProductVariantsSection({
             cell: (v: ProductVariantItem) => (
               <Button
                 type="button"
-                variant="ghost"
+                variant="ghost-danger"
                 size="icon"
                 aria-label={`Eliminar variante ${v.sku}`}
                 onClick={() => setToDelete(v)}
@@ -85,7 +85,7 @@ export function ProductVariantsSection({
     <Can permission={PERMISSIONS.products.productVariant.add}>
       <Button
         type="button"
-        variant="secondary"
+        variant="magenta"
         disabled={panelOpen}
         onClick={() => setPanelOpen(true)}
       >

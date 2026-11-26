@@ -172,7 +172,7 @@ const CharAdminLayout = () => {
         </nav>
       </aside>
       <div className="flex min-h-screen min-w-0 flex-1 flex-col">
-        <header className="flex h-16 shrink-0 items-center gap-4 border-b border-border-soft bg-card/80 px-5 backdrop-blur md:h-(--header-height)">
+        <header className="relative z-30 flex h-16 shrink-0 items-center gap-4 border-b border-border-soft bg-card/80 px-5 backdrop-blur md:h-(--header-height)">
           <button
             type="button"
             onClick={() => setMobileNavOpen(true)}

@@ -64,6 +64,7 @@
   --char-danger-bg-soft: rgba(181, 82, 47, 0.09);
   --char-info: #3660c9;
   --char-info-bg: rgba(54, 96, 201, 0.1);
+  --char-magenta: #b0267f;
   --char-neutral-bg: rgba(138, 143, 150, 0.14);
 
   /* Origen del cliente (chips de `ClientOriginBadge`). Redes: tono de la

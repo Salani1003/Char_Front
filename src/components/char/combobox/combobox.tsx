@@ -328,7 +328,7 @@ export function Combobox<T>({
         {onCreate ? (
           <Button
             type="button"
-            variant="secondary"
+            variant="magenta"
             size="icon"
             aria-label={createButtonLabel}
             disabled={disabled}

@@ -3,8 +3,11 @@ import { Button as BaseButton } from "@/components/ui/button";
 const VARIANT_MAP = {
   primary: "default",
   secondary: "secondary",
+  vivid: "vivid",
+  magenta: "magenta",
   ghost: "ghost",
   danger: "danger",
+  "ghost-danger": "ghost-danger",
   link: "link",
 } as const;
 const SIZE_MAP = {
@@ -23,8 +26,8 @@ type BaseButtonProps = ComponentProps<typeof BaseButton>;
  * no queden acopladas al primitivo.
  *
  * @param variant Rol visual del botón: `primary` (acción principal, color de
- * marca), `secondary` (acción alternativa), `ghost` (acción de baja
- * jerarquía), `danger` (acción destructiva) o `link` (aspecto de enlace).
+ * marca), `secondary` (acción alternativa), `vivid` (azul translúcido), `magenta` (misma receta translúcida que `vivid`, en magenta, para acciones de creación destacadas, ej. "Agregar variantes"), `ghost` (acción de baja
+ * jerarquía), `danger` (acción destructiva), `ghost-danger` (destructiva de baja jerarquía, ej. el ícono de eliminar en una fila) o `link` (aspecto de enlace).
  * @param size Tamaño del botón: `sm`, `md` (default), `lg` o `icon`.
  */
 export function Button({

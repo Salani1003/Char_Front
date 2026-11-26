@@ -181,6 +181,12 @@ export function ComponentsSection() {
           <Example label="secondary">
             <Button variant="secondary">Cancelar</Button>
           </Example>
+          <Example label="magenta">
+            <Button variant="magenta">Agregar</Button>
+          </Example>
+          <Example label="vivid">
+            <Button variant="vivid">Auxiliar</Button>
+          </Example>
           <Example label="ghost">
             <Button variant="ghost">Ghost</Button>
           </Example>

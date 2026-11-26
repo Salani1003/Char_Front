@@ -7,13 +7,19 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-[0_1px_2px_rgba(43,49,56,0.18)] hover:bg-[color-mix(in_oklch,var(--color-primary),black_12%)] hover:shadow-[0_4px_12px_-4px_rgba(63,101,112,0.5)]",
+          "bg-primary text-primary-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_1px_2px_rgba(43,49,56,0.3),0_3px_8px_-3px_rgba(63,101,112,0.45)] hover:bg-[color-mix(in_oklch,var(--color-primary),black_12%)] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_14px_-4px_rgba(63,101,112,0.6)]",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+          "border-border bg-card text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.6),0_1px_2px_rgba(43,49,56,0.12)] hover:border-primary/40 hover:bg-accent hover:text-primary aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+        vivid:
+          "border-info/40 bg-info/15 text-info shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] backdrop-blur-sm hover:border-info/60 hover:bg-info/25 aria-expanded:bg-info/25",
+        magenta:
+          "border-magenta/40 bg-magenta/15 text-magenta shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] backdrop-blur-sm hover:border-magenta/60 hover:bg-magenta/25 aria-expanded:bg-magenta/25",
         ghost:
           "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+        "ghost-danger":
+          "text-danger hover:bg-danger/10 hover:text-danger focus-visible:ring-danger/30 aria-expanded:bg-danger/10",
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         danger:
