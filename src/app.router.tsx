@@ -12,6 +12,7 @@ import { ProtectedRoute } from "./auth/components/ProtectedRoute";
 import { RequirePermission } from "./auth/components/RequirePermission";
 import { PERMISSIONS } from "./auth/lib/permissions";
 import { PublicRoute } from "./auth/components/PublicRoute";
+import { navCrumb, type AdminRouteHandle } from "./admin/config/route-handle";
 import { RouteErrorPage } from "./error/pages/RouteErrorPage";
 export const appRouter = createBrowserRouter([
   //Admin routes
@@ -22,6 +23,9 @@ export const appRouter = createBrowserRouter([
     children: [
       {
         element: <CharAdminLayout />,
+        handle: {
+          crumb: () => ({ label: "Inicio", to: "/admin" }),
+        } satisfies AdminRouteHandle,
         children: [
           {
             index: true,
@@ -29,6 +33,9 @@ export const appRouter = createBrowserRouter([
           },
           {
             path: "clients",
+            handle: {
+              crumb: navCrumb("/admin/clients"),
+            } satisfies AdminRouteHandle,
             element: (
               <RequirePermission permission={PERMISSIONS.clients.view}>
                 <ClientsPage />
@@ -37,6 +44,9 @@ export const appRouter = createBrowserRouter([
           },
           {
             path: "users",
+            handle: {
+              crumb: navCrumb("/admin/users"),
+            } satisfies AdminRouteHandle,
             element: (
               <RequirePermission permission={PERMISSIONS.users.view}>
                 <UsersPage />
