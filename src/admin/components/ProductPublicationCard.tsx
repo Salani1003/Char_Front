@@ -23,20 +23,20 @@ import type { Product } from "../interfaces/product.interface";
  *   interruptor deshabilitado mientras corre) y requiere
  *   `products.change_product`.
  * - **Despublicar** se puede siempre. **Publicar** exige al menos una variante
- *   activa: con `hasVariants={false}` el interruptor queda deshabilitado con
+ *   con foto (`canPublish`): con `publishable={false}` el interruptor queda deshabilitado con
  *   la ayuda correspondiente; si el backend igual lo rechaza se muestra su
  *   mensaje (`is_published` del 400).
  * - El estado mostrado es siempre el del producto que devuelve la API.
  *
  * @param product Producto (la fuente de verdad del estado).
- * @param hasVariants Si tiene al menos una variante activa; `undefined` si no se sabe (sin permiso para verlas): se deja decidir al backend.
+ * @param publishable Si cumple la regla de publicación (al menos una variante activa con foto; ver `canPublish`); `undefined` si no se sabe (sin permiso para ver variantes o fotos): se deja decidir al backend.
  */
 export function ProductPublicationCard({
   product,
-  hasVariants,
+  publishable,
 }: {
   product: Product;
-  hasVariants: boolean | undefined;
+  publishable: boolean | undefined;
 }) {
   const can = useCan();
   const canChange = can(PERMISSIONS.products.product.change);
@@ -44,7 +44,7 @@ export function ProductPublicationCard({
   const [error, setError] = useState<string | null>(null);
 
   const published = product.is_published;
-  const blockedByVariants = !published && hasVariants === false;
+  const blockedByVariants = !published && publishable === false;
   const disabled = !canChange || isPending || blockedByVariants;
 
   const toggle = async (next: boolean) => {
@@ -81,7 +81,7 @@ export function ProductPublicationCard({
         </div>
         <p id="is_published-hint" className="text-sm text-muted-foreground">
           {blockedByVariants
-            ? "Para publicar hace falta al menos una variante. Si se apaga, el producto deja de verse en la tienda pero conserva sus datos."
+            ? "Para publicar hace falta al menos una variante con foto. Si se apaga, el producto deja de verse en la tienda pero conserva sus datos."
             : "Si se apaga, el producto deja de verse en la tienda pero conserva sus datos."}
         </p>
         {error ? (

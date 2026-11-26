@@ -1,4 +1,5 @@
 import type { Color } from "./color.interface";
+import type { ProductImageItem } from "./product-image.interface";
 import type { Size } from "./size.interface";
 
 /**
@@ -52,7 +53,13 @@ export interface ProductVariantItem {
   size: Size;
 }
 
-/** `GET /products/:id/with-variants/`: el producto más sus variantes activas (ordenadas por color y talle). */
+/**
+ * `GET /products/:id/with-variants/`: el producto más sus variantes activas
+ * (ordenadas por color y talle) y sus fotos activas (`images`, por color y,
+ * dentro de cada color, principal primero y luego `sort_order`).
+ */
 export interface ProductWithVariants extends Product {
   variants: ProductVariantItem[];
+  /** Fotos activas; puede no venir si el usuario no ve imágenes. */
+  images?: ProductImageItem[];
 }

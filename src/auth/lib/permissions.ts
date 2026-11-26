@@ -35,6 +35,7 @@ export const PERMISSIONS = {
     size: crud("products", "size"),
     product: crud("products", "product"),
     productVariant: crud("products", "productvariant"),
+    productImage: crud("products", "productimage"),
     /** Ver y editar el precio de costo de un producto. */
     costPrice: "products.view_cost_price",
   },

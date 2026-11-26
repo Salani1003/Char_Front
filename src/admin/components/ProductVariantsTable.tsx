@@ -2,12 +2,14 @@ import { Link } from "react-router";
 import { Badge } from "@/components/char/badge";
 import { DataTable } from "@/components/char/data-table";
 import type { DataTableColumn } from "@/components/char/data-table";
+import { PERMISSIONS, useCan } from "@/auth/lib/permissions";
 import { VariantColor } from "./VariantColor";
+import { VariantPhoto } from "./VariantPhoto";
 import { VariantPrice } from "./VariantPrice";
 import type { ProductVariant } from "../interfaces/product-variant.interface";
 
 /**
- * Tabla de variantes de `ProductsPage`: SKU, producto (enlace a su edición, con categoría y marca/
+ * Tabla de variantes de `ProductsPage`: Foto (miniatura de la principal del color, solo con `view_productimage`), SKU, producto (enlace a su edición, con categoría y marca/
  * modelo debajo), color (con muestra), talle, precio vigente (`VariantPrice`)
  * y estado de publicación. Ordena por columna con los campos de la API
  * (`sku`, `product__name`, `color__name`, `size__order`, `effective_price`);
@@ -36,7 +38,17 @@ export function ProductVariantsTable({
   dimmed?: boolean;
   className?: string;
 }) {
+  const canViewImages = useCan()(PERMISSIONS.products.productImage.view);
   const columns: DataTableColumn<ProductVariant>[] = [
+    ...(canViewImages
+      ? [
+          {
+            key: "photo",
+            header: "Foto",
+            cell: (v: ProductVariant) => <VariantPhoto variant={v} />,
+          },
+        ]
+      : []),
     {
       key: "sku",
       header: "SKU",

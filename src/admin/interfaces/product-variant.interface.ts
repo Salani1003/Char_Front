@@ -31,6 +31,10 @@ export interface ProductVariant {
   /** Precio vigente hoy: el de promo si está en rango, si no el de venta. */
   current_price: string;
   is_on_promo: boolean;
+  /** Foto completa del color de la variante (la principal o, si no hay, la de menor orden); `null` si no tiene. */
+  image_url: string | null;
+  /** Miniatura 400×400 de esa misma foto; `null` si no tiene. */
+  thumbnail_url: string | null;
 }
 
 /** Elemento de los catálogos auxiliares (categorías, marcas, modelos, colores, talles). */

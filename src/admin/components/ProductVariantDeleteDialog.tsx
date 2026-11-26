@@ -16,6 +16,7 @@ import type { ProductVariantItem } from "../interfaces/product.interface";
  * "Despublicar producto": al despublicar se limpia el error y se puede
  * reintentar "Eliminar". Éxito: cierra y avisa con un toast.
  *
+ * @param blockedByPhotos Si el producto está publicado y esta es la última variante con foto: el backend lo rechazaría, así que "Eliminar" queda deshabilitado con la ayuda "Para eliminarla, despublicá el producto primero" y el atajo "Despublicar producto".
  * @param variant Variante a eliminar; `null` mantiene el diálogo cerrado.
  * @param productId Producto de la variante.
  * @param productPublished Si el producto está publicado (habilita el atajo de despublicar).
@@ -23,11 +24,13 @@ import type { ProductVariantItem } from "../interfaces/product.interface";
  */
 export function ProductVariantDeleteDialog({
   variant,
+  blockedByPhotos = false,
   productId,
   productPublished,
   onClose,
 }: {
   variant: ProductVariantItem | null;
+  blockedByPhotos?: boolean;
   productId: number;
   productPublished: boolean;
   onClose: () => void;
@@ -75,10 +78,11 @@ export function ProductVariantDeleteDialog({
           : "¿Eliminar la variante?"
       }
       description={
-        error ? (
+        error || blockedByPhotos ? (
           <span className="flex flex-col items-center gap-3">
             <span role="alert" className="text-danger">
-              {error}
+              {error ??
+                "Es la última variante con foto de un producto publicado. Para eliminarla, despublicá el producto primero."}
             </span>
             {productPublished ? (
               <Button
@@ -97,7 +101,7 @@ export function ProductVariantDeleteDialog({
         )
       }
       confirmLabel={isPending ? "Eliminando…" : "Eliminar"}
-      confirmDisabled={isPending || unpublishing}
+      confirmDisabled={isPending || unpublishing || blockedByPhotos}
       closeOnConfirm={false}
       cancelLabel="Cancelar"
       onConfirm={() => void confirm()}

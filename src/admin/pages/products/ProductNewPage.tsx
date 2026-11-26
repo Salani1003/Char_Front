@@ -35,8 +35,8 @@ import {
  * Pantalla "Nuevo producto" (`/admin/products/new`, permiso
  * `products.add_product`). Secciones: Datos del producto (nombre, slug,
  * descripción), Clasificación (categoría, marca y modelo con autocompletado y
- * "+"), Precios (costo, venta y Promoción opcional) y Variantes (deshabilitada
- * hasta guardar). El lateral muestra la Publicación (siempre "Sin publicar":
+ * "+"), Precios (costo, venta y Promoción opcional) y Imágenes y Variantes
+ * (bloqueadas hasta guardar). El lateral muestra la Publicación (siempre "Sin publicar":
  * un producto nuevo no puede nacer publicado) y el Precio vigente (vista
  * previa calculada en el front).
  *
@@ -158,6 +158,22 @@ export const ProductNewPage = () => {
             autoFocusName
             slugDescription="Se genera sola desde el nombre; si ya existe, se numera. Podés editarla. No cambia al renombrar el producto."
           />
+
+          <Card aria-disabled>
+            <CardHeader>
+              <CardTitle>Imágenes</CardTitle>
+              <CardDescription>
+                Primero guardá el producto y cargale variantes. Después vas a
+                poder subir las fotos de cada color desde la pantalla de
+                edición.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button type="button" variant="secondary" disabled>
+                Subir fotos
+              </Button>
+            </CardContent>
+          </Card>
 
           <Card aria-disabled>
             <CardHeader>

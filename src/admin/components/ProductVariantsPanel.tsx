@@ -61,15 +61,18 @@ const variantsText = (count: number) =>
  * @param productId Producto al que se agregan las variantes.
  * @param existing Variantes que el producto ya tiene (para la vista previa).
  * @param onClose Cierra el panel (después de crear o de confirmar el descarte).
+ * @param onViewImages Si se pasa (hay permiso para ver imágenes), el toast "Se crearon N variantes" suma la acción "Cargar fotos de {color}" que lleva a la pestaña Imágenes en ese color.
  */
 export function ProductVariantsPanel({
   productId,
   existing,
   onClose,
+  onViewImages,
 }: {
   productId: number;
   existing: readonly ProductVariantItem[];
   onClose: () => void;
+  onViewImages?: (colorId: number) => void;
 }) {
   const uid = useId();
   const can = useCan();
@@ -133,7 +136,18 @@ export function ProductVariantsPanel({
     setProgress(null);
     const created = createdBefore + results.filter((r) => r.ok).length;
     if (results.every((r) => r.ok)) {
-      toast.success(`Se crearon ${variantsText(created)}`);
+      const color = colors.data?.find((c) => c.id === colorId);
+      toast.success(
+        `Se crearon ${variantsText(created)}`,
+        color && onViewImages
+          ? {
+              action: {
+                label: `Cargar fotos de ${color.name}`,
+                onClick: () => onViewImages(color.id),
+              },
+            }
+          : undefined,
+      );
       onClose();
       return;
     }

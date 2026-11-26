@@ -6,10 +6,18 @@ import { Button } from "@/components/char/button";
 import { DataTable, type DataTableColumn } from "@/components/char/data-table";
 import { Notice } from "@/components/char/notice";
 import { StateMessage } from "@/components/char/state-message";
+import type { ProductImageItem } from "../interfaces/product-image.interface";
 import type {
   Product,
   ProductVariantItem,
 } from "../interfaces/product.interface";
+import {
+  canPublish,
+  effectiveImage,
+  wouldBreakPublication,
+} from "../utils/productImages";
+import { PUBLISH_NEEDS_PHOTO } from "./ProductImagesSideCards";
+import { ColorPhotoThumb } from "./ColorPhotoThumb";
 import { ProductVariantDeleteDialog } from "./ProductVariantDeleteDialog";
 import { ProductVariantsPanel } from "./ProductVariantsPanel";
 import { VariantColor } from "./VariantColor";
@@ -29,22 +37,54 @@ import { VariantColor } from "./VariantColor";
  * - Sin variantes muestra el estado vacío "Este producto todavía no tiene
  *   variantes."
  *
+ * - **Fotos** (solo con `images`, es decir con `view_productimage`): primera
+ *   columna **Foto** con la foto efectiva del color (`ColorPhotoThumb`; sin fotos,
+ *   "Sin foto" lleva a la pestaña Imágenes en ese color) y un aviso por cada
+ *   color sin fotos con "Cargar fotos de {color}". No bloquea nada.
+ *
  * @param product Producto (su `is_published` decide el aviso).
  * @param variants Variantes activas del producto.
+ * @param images Fotos activas del producto; `undefined` si el usuario no ve imágenes (sin columna ni avisos).
+ * @param onGoToImages Navega a la pestaña Imágenes en un color.
  */
 export function ProductVariantsSection({
   product,
   variants,
+  images,
+  onGoToImages,
 }: {
   product: Product;
   variants: ProductVariantItem[];
+  images?: ProductImageItem[];
+  onGoToImages?: (colorId: number) => void;
 }) {
   const can = useCan();
   const canDelete = can(PERMISSIONS.products.productVariant.delete);
   const [panelOpen, setPanelOpen] = useState(false);
   const [toDelete, setToDelete] = useState<ProductVariantItem | null>(null);
 
+  const colorsWithoutPhotos = images
+    ? [...new Map(variants.map((v) => [v.color.id, v.color])).values()].filter(
+        (color) => !effectiveImage(images, color.id),
+      )
+    : [];
+
   const columns: DataTableColumn<ProductVariantItem>[] = [
+    ...(images && onGoToImages
+      ? [
+          {
+            key: "photo",
+            header: "Foto",
+            cell: (v: ProductVariantItem) => (
+              <ColorPhotoThumb
+                image={effectiveImage(images, v.color.id)}
+                colorName={v.color.name}
+                onAddPhotos={() => onGoToImages(v.color.id)}
+              />
+            ),
+          },
+        ]
+      : []),
     { key: "sku", header: "SKU", cell: (v) => v.sku },
     {
       key: "color",
@@ -108,11 +148,49 @@ export function ProductVariantsSection({
         </Notice>
       ) : null}
 
+      {onGoToImages && images && variants.length > 0 ? (
+        !canPublish(variants, images) && !product.is_published ? (
+          <Notice variant="warning">
+            <span className="flex flex-wrap items-center gap-3">
+              <span>{PUBLISH_NEEDS_PHOTO}</span>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => onGoToImages(colorsWithoutPhotos[0].id)}
+              >
+                Cargar fotos de {colorsWithoutPhotos[0].name}
+              </Button>
+            </span>
+          </Notice>
+        ) : (
+          colorsWithoutPhotos.map((color) => (
+            <Notice key={color.id} variant="info">
+              <span className="flex flex-wrap items-center gap-3">
+                <span>
+                  {color.name} todavía no tiene fotos: en la tienda se verá sin
+                  imagen. Para publicar alcanza con que una variante tenga foto.
+                </span>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => onGoToImages(color.id)}
+                >
+                  Cargar fotos de {color.name}
+                </Button>
+              </span>
+            </Notice>
+          ))
+        )
+      ) : null}
+
       {panelOpen ? (
         <ProductVariantsPanel
           productId={product.id}
           existing={variants}
           onClose={() => setPanelOpen(false)}
+          onViewImages={onGoToImages}
         />
       ) : null}
 
@@ -136,6 +214,14 @@ export function ProductVariantsSection({
 
       <ProductVariantDeleteDialog
         variant={toDelete}
+        blockedByPhotos={
+          !!toDelete &&
+          !!images &&
+          product.is_published &&
+          wouldBreakPublication(variants, images, {
+            withoutVariantId: toDelete.id,
+          })
+        }
         productId={product.id}
         productPublished={product.is_published}
         onClose={() => setToDelete(null)}

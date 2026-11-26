@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link, useBlocker, useNavigate, useParams, useSearchParams } from "react-router";
+import {
+  Link,
+  useBlocker,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
@@ -23,6 +29,11 @@ import { ProductCurrentPriceCard } from "@/admin/components/ProductCurrentPriceC
 import { ProductDeleteDialog } from "@/admin/components/ProductDeleteDialog";
 import { ProductEditSkeleton } from "@/admin/components/ProductEditSkeleton";
 import { ProductFormFields } from "@/admin/components/ProductFormFields";
+import { ProductImagesTab } from "@/admin/components/ProductImagesTab";
+import {
+  ProductImagesHelpCard,
+  ProductImagesSummaryCard,
+} from "@/admin/components/ProductImagesSideCards";
 import { ProductPublicationCard } from "@/admin/components/ProductPublicationCard";
 import { ProductSummaryCard } from "@/admin/components/ProductSummaryCard";
 import { ProductVariantsSection } from "@/admin/components/ProductVariantsSection";
@@ -32,10 +43,16 @@ import {
   useProductWithVariants,
   useUpdateProduct,
 } from "@/admin/hooks/useProducts";
+import type { ProductImageItem } from "@/admin/interfaces/product-image.interface";
 import type {
   Product,
   ProductVariantItem,
 } from "@/admin/interfaces/product.interface";
+import {
+  buildColorSections,
+  canPublish,
+  summarizeImages,
+} from "@/admin/utils/productImages";
 import {
   buildUpdateProductRequest,
   productInitialOptions,
@@ -49,7 +66,7 @@ import {
 } from "@/admin/utils/productForm";
 import { Skeleton } from "@/components/char/skeleton";
 
-type ProductTab = "data" | "variants";
+type ProductTab = "data" | "variants" | "images";
 
 /**
  * Pantalla "Editar producto" (`/admin/products/:id`, permiso
@@ -115,6 +132,7 @@ export const ProductEditPage = () => {
       product={product.data}
       canViewVariants={canViewVariants}
       variants={withVariants.data?.variants}
+      images={withVariants.data?.images ?? []}
       variantsLoading={canViewVariants && withVariants.isPending}
       variantsError={
         withVariants.error ? toApiError(withVariants.error).message : null
@@ -142,8 +160,13 @@ export const ProductEditPage = () => {
  * - **Costo**: solo con `products.view_cost_price`.
  * - **Sin `change_product`**: modo lectura (campos deshabilitados, sin
  *   "Guardar cambios", interruptor deshabilitado).
- * - **Pestaña inicial**: `?tab=variants` (con permiso de ver variantes) abre
- *   "Variantes"; si no, "Datos y precios".
+ * - **Pestaña**: el estado vive en la URL: `?tab=variants` (con permiso de ver
+ *   variantes) o `?tab=images` (con permiso de ver variantes **e** imágenes, y
+ *   opcionalmente `&color=<id>` para llevar el foco a un color); si no, "Datos y
+ *   precios". Cambiar de pestaña actualiza la URL.
+ * - **Imágenes**: `ProductImagesTab` (se mantiene montada para no perder las
+ *   subidas en curso); su lateral es Publicación + Resumen de fotos + Cómo
+ *   funcionan las fotos. La pestaña Variantes suma la columna Foto y avisos.
  * - **Variantes**: `ProductVariantsSection` (tabla, panel "Agregar variantes" y eliminar).
  * - **Eliminar**: con `delete_product` y confirmación; el error del backend se
  *   muestra en el diálogo.
@@ -152,6 +175,7 @@ export const ProductEditPage = () => {
  * @param product Producto cargado.
  * @param canViewVariants Si hay permiso para ver variantes (muestra la pestaña).
  * @param variants Variantes activas (`undefined` mientras no cargan o sin permiso).
+ * @param images Fotos activas del producto (de `with-variants`).
  * @param variantsLoading Si las variantes todavía cargan.
  * @param variantsError Mensaje si falló la carga de variantes.
  * @param onRetryVariants Reintenta la carga de variantes.
@@ -160,6 +184,7 @@ function ProductEditView({
   product,
   canViewVariants,
   variants,
+  images,
   variantsLoading,
   variantsError,
   onRetryVariants,
@@ -167,6 +192,7 @@ function ProductEditView({
   product: Product;
   canViewVariants: boolean;
   variants: ProductVariantItem[] | undefined;
+  images: ProductImageItem[];
   variantsLoading: boolean;
   variantsError: string | null;
   onRetryVariants: () => void;
@@ -176,6 +202,9 @@ function ProductEditView({
   const canChange = can(PERMISSIONS.products.product.change);
   const canDelete = can(PERMISSIONS.products.product.delete);
   const canCost = can(PERMISSIONS.products.costPrice);
+  // Las fotos vienen dentro de `with-variants`: sin ver variantes no hay fuente.
+  const canViewImages =
+    canViewVariants && can(PERMISSIONS.products.productImage.view);
   const { mutateAsync: updateProduct } = useUpdateProduct();
 
   const [initial, setInitial] = useState(() => productToFormValues(product));
@@ -195,13 +224,25 @@ function ProductEditView({
     control,
     name: ["promo_price", "promo_start", "promo_end"],
   });
-  // `?tab=variants` (desde "Ver variantes" del listado) abre esa pestaña.
-  const [searchParams] = useSearchParams();
-  const [tab, setTab] = useState<ProductTab>(
-    canViewVariants && searchParams.get("tab") === "variants"
+  // La pestaña vive en la URL (`?tab=variants|images`, `&color=<id>`), así se
+  // puede enlazar desde otras pantallas.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const tab: ProductTab =
+    tabParam === "variants" && canViewVariants
       ? "variants"
-      : "data",
-  );
+      : tabParam === "images" && canViewImages
+        ? "images"
+        : "data";
+  const colorParam = Number(searchParams.get("color"));
+  const focusColorId =
+    tab === "images" && Number.isInteger(colorParam) && colorParam > 0
+      ? colorParam
+      : null;
+  const setTab = (next: ProductTab) =>
+    setSearchParams(next === "data" ? {} : { tab: next }, { replace: true });
+  const goToImages = (colorId: number) =>
+    setSearchParams({ tab: "images", color: String(colorId) });
   const [formError, setFormError] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [leaving, setLeaving] = useState(false);
@@ -225,6 +266,15 @@ function ProductEditView({
 
   const published = product.is_published;
   const summary = variants ? summarizeVariants(variants) : undefined;
+  // Publicar exige al menos una variante con foto (solo se sabe con ambos permisos).
+  const publishable =
+    canViewImages && variants ? canPublish(variants, images) : undefined;
+  const needsPhotoToPublish =
+    !published && !!variants && variants.length > 0 && publishable === false;
+  const imagesSummary =
+    canViewImages && variants
+      ? summarizeImages(buildColorSections({ variants, images }))
+      : undefined;
   const hasPromoValues = promo.some((value) => value.trim() !== "");
 
   const onSubmit = async (values: ProductFormValues) => {
@@ -325,6 +375,14 @@ function ProductEditView({
               ) : null}
             </TabsTrigger>
           ) : null}
+          {canViewImages ? (
+            <TabsTrigger value="images">
+              Imágenes
+              {variants ? (
+                <Badge variant="secondary">{images.length}</Badge>
+              ) : null}
+            </TabsTrigger>
+          ) : null}
         </TabsList>
 
         <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
@@ -390,6 +448,34 @@ function ProductEditView({
                   <ProductVariantsSection
                     product={product}
                     variants={variants}
+                    images={canViewImages ? images : undefined}
+                    onGoToImages={canViewImages ? goToImages : undefined}
+                  />
+                )}
+              </TabsContent>
+            ) : null}
+            {canViewImages ? (
+              <TabsContent value="images" keepMounted className="pt-0">
+                {variantsLoading ? (
+                  <Skeleton className="h-48 w-full rounded-xl" />
+                ) : variantsError || !variants ? (
+                  <StateMessage
+                    variant="error"
+                    action={
+                      <Button variant="secondary" onClick={onRetryVariants}>
+                        Reintentar
+                      </Button>
+                    }
+                  >
+                    {variantsError ?? "No se pudieron cargar las fotos."}
+                  </StateMessage>
+                ) : (
+                  <ProductImagesTab
+                    product={product}
+                    variants={variants}
+                    images={images}
+                    published={published}
+                    focusColorId={focusColorId}
                   />
                 )}
               </TabsContent>
@@ -399,10 +485,27 @@ function ProductEditView({
           <div className="flex flex-col gap-6">
             <ProductPublicationCard
               product={product}
-              hasVariants={variants ? variants.length > 0 : undefined}
+              publishable={publishable}
             />
-            <ProductCurrentPriceCard product={product} />
-            <ProductSummaryCard product={product} summary={summary} />
+            {tab === "images" && imagesSummary ? (
+              <>
+                <ProductImagesSummaryCard
+                  summary={imagesSummary}
+                  needsPhotoToPublish={needsPhotoToPublish}
+                />
+                <ProductImagesHelpCard />
+              </>
+            ) : (
+              <>
+                <ProductCurrentPriceCard product={product} />
+                <ProductSummaryCard
+                  product={product}
+                  summary={summary}
+                  imagesSummary={imagesSummary}
+                  needsPhotoToPublish={needsPhotoToPublish}
+                />
+              </>
+            )}
           </div>
         </div>
       </Tabs>

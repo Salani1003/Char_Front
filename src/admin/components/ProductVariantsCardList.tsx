@@ -12,6 +12,7 @@ import {
 } from "@/components/char/select";
 import { cn } from "@/lib/utils";
 import { UsersListSkeleton } from "./UsersListSkeleton";
+import { PERMISSIONS, useCan } from "@/auth/lib/permissions";
 import { VariantColor } from "./VariantColor";
 import { VariantPrice } from "./VariantPrice";
 import type { ProductVariant } from "../interfaces/product-variant.interface";
@@ -56,6 +57,7 @@ export function ProductVariantsCardList({
   dimmed?: boolean;
   className?: string;
 }) {
+  const canViewImages = useCan()(PERMISSIONS.products.productImage.view);
   const descending = ordering.startsWith("-");
   const field = ordering.replace(/^-/, "") || "product__name";
 
@@ -116,6 +118,15 @@ export function ProductVariantsCardList({
             <EntityCard
               key={v.id}
               title={v.product_name}
+              avatar={
+                canViewImages && (v.thumbnail_url ?? v.image_url) ? (
+                  <img
+                    src={(v.thumbnail_url ?? v.image_url) as string}
+                    alt=""
+                    className="size-full rounded-full object-cover"
+                  />
+                ) : undefined
+              }
               subtitle={`${v.sku} · ${v.category_label}`}
               badge={
                 <Badge variant={v.is_published ? "success" : "secondary"}>
