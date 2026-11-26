@@ -20,10 +20,10 @@ const AuthLayout = () => {
             className="h-16 w-16 rounded-full"
           />
           <div>
-            <p className="font-montserrat text-4xl font-semibold text-sidebar-heading">
+            <p className="font-display text-4xl font-medium tracking-wide text-sidebar-heading">
               Char Tienda
             </p>
-            <p className="font-sans text-lg tracking-[0.2em] text-sidebar-idle">
+            <p className="font-sans text-sm tracking-[0.3em] text-(--char-brand-gold)/80">
               GESTIÓN COMERCIAL
             </p>
           </div>
@@ -50,7 +50,7 @@ const AuthLayout = () => {
             className="h-16 w-16 rounded-full"
           />
           <div>
-            <p className="font-montserrat text-2xl font-semibold text-foreground">
+            <p className="font-display text-2xl font-medium tracking-wide text-foreground">
               Char Tienda
             </p>
             <p className="font-sans text-xs tracking-[0.2em] text-sidebar-idle">

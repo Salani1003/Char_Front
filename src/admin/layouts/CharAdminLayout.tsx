@@ -49,6 +49,8 @@ import { getUserFullName } from "../utils/getUserFullName";
  * transición de ancho suave. Por debajo de 900px el panel se comporta
  * como un drawer off-canvas: se oculta detrás de un botón de menú en el
  * header y se abre superpuesto sobre el contenido, siempre expandido.
+ * Estética: panel con degradé slate, wordmark serif con detalle dorado y
+ * header translúcido.
  */
 const CharAdminLayout = () => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -82,7 +84,7 @@ const CharAdminLayout = () => {
       ) : null}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-(--sidebar-width-mobile) flex-col gap-8 overflow-x-hidden bg-sidebar px-6 py-8 shadow-(--shadow-nav-mobile) transition-transform duration-(--duration-base) ease-(--ease-standard) md:sticky md:top-0 md:z-auto md:h-screen md:translate-x-0 md:shadow-none md:transition-[width,padding] md:duration-(--duration-base) md:ease-(--ease-standard)",
+          "fixed inset-y-0 left-0 z-50 flex w-(--sidebar-width-mobile) flex-col gap-8 overflow-x-hidden bg-linear-to-b from-sidebar to-[color-mix(in_oklch,var(--color-sidebar),black_18%)] px-6 py-8 shadow-(--shadow-nav-mobile) transition-transform duration-(--duration-base) ease-(--ease-standard) md:sticky md:top-0 md:z-auto md:h-screen md:translate-x-0 md:shadow-none md:transition-[width,padding] md:duration-(--duration-base) md:ease-(--ease-standard)",
           collapsed
             ? "md:w-(--sidebar-width-rail) md:px-3"
             : "md:w-(--sidebar-width)",
@@ -100,10 +102,10 @@ const CharAdminLayout = () => {
               )}
             />
             <div className={cn("min-w-0", collapsed && "md:hidden")}>
-              <p className="truncate font-montserrat text-2xl leading-tight font-semibold text-sidebar-heading">
+              <p className="truncate font-display text-2xl leading-tight font-medium tracking-wide text-sidebar-heading">
                 Char Tienda
               </p>
-              <p className="truncate font-sans text-xs tracking-[0.2em] text-sidebar-idle">
+              <p className="truncate font-sans text-[10px] tracking-[0.3em] text-(--char-brand-gold)/80">
                 GESTIÓN COMERCIAL
               </p>
             </div>
@@ -139,11 +141,11 @@ const CharAdminLayout = () => {
               onClick={() => setMobileNavOpen(false)}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 rounded-nav-item border-l-[3px] px-3.5 py-3.5 text-base font-medium transition-colors",
+                  "flex items-center gap-3 rounded-nav-item border-l-2 px-3.5 py-3.5 text-[15px] font-medium tracking-wide transition-[background-color,color,border-color,padding] duration-(--duration-base) ease-(--ease-standard)",
                   collapsed && "md:justify-center md:px-2",
                   isActive
-                    ? "border-primary bg-accent text-sidebar-accent-foreground"
-                    : "border-transparent text-sidebar-idle hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                    ? "border-(--char-brand-gold) bg-white/[0.07] text-sidebar-accent-foreground"
+                    : "border-transparent text-sidebar-idle hover:bg-white/[0.045] hover:text-sidebar-accent-foreground",
                 )
               }
             >
@@ -170,7 +172,7 @@ const CharAdminLayout = () => {
         </nav>
       </aside>
       <div className="flex min-h-screen min-w-0 flex-1 flex-col">
-        <header className="flex h-16 shrink-0 items-center gap-4 border-b border-border bg-card px-5 md:h-(--header-height)">
+        <header className="flex h-16 shrink-0 items-center gap-4 border-b border-border-soft bg-card/80 px-5 backdrop-blur md:h-(--header-height)">
           <button
             type="button"
             onClick={() => setMobileNavOpen(true)}
@@ -191,7 +193,7 @@ const CharAdminLayout = () => {
             </button>
             <div className="hidden h-6 w-px bg-border md:block" />
             <div className="flex items-center gap-3">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-sidebar font-display text-sm font-semibold text-sidebar-heading">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-sidebar font-display text-sm font-medium tracking-wide text-sidebar-heading ring-2 ring-(--char-brand-gold)/60 ring-offset-2 ring-offset-card">
                 {initials}
               </div>
               <p className="hidden text-sm leading-tight font-semibold text-foreground sm:block">
@@ -217,7 +219,7 @@ const CharAdminLayout = () => {
             </div>
           </div>
         </header>
-        <main className="min-w-0 flex-1 overflow-y-auto p-5 md:p-8">
+        <main className="min-w-0 flex-1 overflow-y-auto p-5 md:px-10 md:py-9">
           <AdminBreadcrumb />
           <Suspense fallback={<PageSkeleton />}>
             <Outlet />

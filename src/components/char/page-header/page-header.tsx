@@ -27,17 +27,17 @@ export function PageHeader({
     <header
       data-slot="page-header"
       className={cn(
-        "flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6",
+        "animate-rise flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6",
         className,
       )}
       {...props}
     >
       <div className="flex min-w-0 flex-col gap-1">
-        <h1 className="font-display text-3xl leading-tight font-semibold text-foreground">
+        <h1 className="font-display text-3xl leading-tight font-medium tracking-tight text-foreground md:text-4xl">
           {title}
         </h1>
         {description ? (
-          <p className="max-w-prose text-sm text-muted-foreground">
+          <p className="max-w-prose text-sm text-muted-foreground md:text-[15px]">
             {description}
           </p>
         ) : null}

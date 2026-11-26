@@ -27,6 +27,9 @@ function getInitials(name: string) {
  * (ver `admin/components/UserCard`). Mobile-first: ocupa el ancho de su
  * contenedor y los textos largos se truncan.
  *
+ * Al pasar el mouse, un filo dorado en el borde superior se extiende (igual
+ * que en los accesos del dashboard).
+ *
  * @param title Nombre principal del registro.
  * @param subtitle Texto secundario bajo el título (ej. email).
  * @param avatar Contenido del avatar; por defecto las iniciales de `title`.
@@ -57,9 +60,16 @@ export function EntityCard({
   return (
     <Card
       data-slot="entity-card"
-      className={cn("gap-4 px-(--card-spacing)", className)}
+      className={cn(
+        "relative gap-4 px-(--card-spacing) hover:shadow-(--shadow-card-hover)",
+        className,
+      )}
       {...props}
     >
+      <span
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-px origin-left scale-x-25 bg-(--char-brand-gold) transition-transform duration-(--duration-slower) ease-(--ease-standard) group-hover/card:scale-x-100"
+      />
       <div className="flex items-start gap-3">
         <div
           aria-hidden
