@@ -1,8 +1,10 @@
 import { Link } from "react-router";
 import { ArrowRight } from "lucide-react";
+import { PERMISSIONS, useCan } from "@/auth/lib/permissions";
 import { useAuthStore } from "@/auth/store/auth.store";
 import { Card } from "@/components/char/card";
 import { PageHeader } from "@/components/char/page-header";
+import { StateMessage } from "@/components/char/state-message";
 import { Skeleton } from "@/components/char/skeleton";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useUsers } from "../../hooks/useUsers";
@@ -22,17 +24,22 @@ function getGreeting() {
  * su nombre y ofrece accesos directos a las demás pantallas del backoffice
  * (tomadas de `adminNavItems`, con su `description`), mostrando en la tarjeta
  * de Usuarios la cantidad de usuarios activos (`useUsers`, solo se lee el
- * `count`; mientras carga se muestra un skeleton). Cuando haya más módulos
+ * `count`; mientras carga se muestra un skeleton). Solo muestra los módulos que el usuario puede ver (`can`); si no puede ver
+ * ninguno, muestra el aviso de "sin permisos". Cuando haya más módulos
  * (ventas, stock, ...) se suman a la navegación y aparecen acá solos.
  */
 export const DashboardPage = () => {
   useDocumentTitle("Dashboard · Char");
   const firstName = useAuthStore((state) => state.user?.first_name);
-  const { data: activeUsers, isPending } = useUsers({
-    page_size: 1,
-    is_active: true,
-  });
-  const shortcuts = adminNavItems.filter((item) => !item.end);
+  const can = useCan();
+  const canViewUsers = can(PERMISSIONS.users.view);
+  const { data: activeUsers, isPending } = useUsers(
+    { page_size: 1, is_active: true },
+    { enabled: canViewUsers },
+  );
+  const shortcuts = adminNavItems.filter(
+    (item) => !item.end && (!item.permission || can(item.permission)),
+  );
 
   return (
     <div className="flex flex-col gap-8">
@@ -40,6 +47,12 @@ export const DashboardPage = () => {
         title={firstName ? `${getGreeting()}, ${firstName}` : getGreeting()}
         description="Desde acá llegás a cada parte del sistema."
       />
+      {shortcuts.length === 0 ? (
+        <StateMessage variant="empty">
+          Tu usuario no tiene permisos para ver ninguna sección. Pedile acceso a
+          un administrador.
+        </StateMessage>
+      ) : null}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {shortcuts.map(({ to, label, icon: Icon, description }) => (
           <Link

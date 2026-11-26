@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
+import { Can } from "@/auth/components/Can";
+import { PERMISSIONS } from "@/auth/lib/permissions";
 import { AlertDialog } from "@/components/char/alert-dialog";
 import { Button } from "@/components/char/button";
 import { SearchBar } from "@/components/char/search-bar";
@@ -32,9 +34,14 @@ import { getUserFullName } from "@/admin/utils/getUserFullName";
  * por usuario y paginación (`Pagination`; vuelve a la página 1 al buscar,
  * filtrar o cambiar el tamaño). Cubre los estados de carga (esqueleto de tarjetas), error (con
  * "Reintentar") y vacío con `StateMessage`. "Nuevo usuario" y la opción
- * "Editar" de cada tarjeta abren `UserFormDialog` (alta / edición); "Eliminar"
- * abre una confirmación y, si se acepta, elimina el usuario. Los errores del
- * backend al eliminar se muestran en una alerta.
+ * "Editar" de cada tarjeta abren `UserFormDialog` (alta / edición); "Desactivar"
+ * (el `DELETE` desactiva, no borra) abre una confirmación y, si se acepta,
+ * desactiva el usuario. Los errores del backend (403/400, ej. sin permiso o
+ * usuario con más permisos) se muestran en una alerta. Cada acción depende de
+ * un permiso (`can`): "Nuevo usuario" de `users.add_user`, "Editar" de
+ * `users.change_user` y "Desactivar" de `users.delete_user` (y no sobre uno
+ * mismo). Los nombres de roles se resuelven con `useGroups`, que solo carga
+ * con `auth.view_group`; sin él se usa `group_names` si el backend lo trae.
  */
 const USER_FILTERS: FilterDefinition[] = [
   {
@@ -97,7 +104,7 @@ export const UsersPage = () => {
     if (!userToDelete) return;
     try {
       await deleteUser(userToDelete.id);
-      toast.success("Usuario eliminado");
+      toast.success("Usuario desactivado");
       // Si era el único de la última página, volver a la anterior.
       if (page > 1 && data?.results.length === 1) setPage(page - 1);
     } catch (error) {
@@ -111,9 +118,11 @@ export const UsersPage = () => {
         title="Usuarios"
         description="Gestioná los usuarios del sistema y sus permisos de acceso."
         actions={
-          <Button onClick={openCreate}>
-            <Plus /> Nuevo usuario
-          </Button>
+          <Can permission={PERMISSIONS.users.add}>
+            <Button onClick={openCreate}>
+              <Plus /> Nuevo usuario
+            </Button>
+          </Can>
         }
       />
       <SearchBar
@@ -161,10 +170,14 @@ export const UsersPage = () => {
             <UserCard
               key={user.id}
               user={user}
-              roles={user.groups.flatMap((id) => {
-                const name = groups.find((g) => g.id === id)?.name;
-                return name ? [name] : [];
-              })}
+              roles={
+                groups.length
+                  ? user.groups.flatMap((id) => {
+                      const name = groups.find((g) => g.id === id)?.name;
+                      return name ? [name] : [];
+                    })
+                  : (user.group_names ?? [])
+              }
               onEdit={openEdit}
               onDelete={setUserToDelete}
             />
@@ -191,13 +204,13 @@ export const UsersPage = () => {
         open={userToDelete !== null}
         onOpenChange={(open) => !open && setUserToDelete(null)}
         variant="danger"
-        title="¿Eliminar usuario?"
+        title="¿Desactivar usuario?"
         description={
           userToDelete
-            ? `Se eliminará a ${getUserFullName(userToDelete)}. Esta acción no se puede deshacer.`
+            ? `Se desactivará a ${getUserFullName(userToDelete)}. No podrá iniciar sesión hasta que se reactive.`
             : undefined
         }
-        confirmLabel="Eliminar"
+        confirmLabel="Desactivar"
         cancelLabel="Cancelar"
         onConfirm={confirmDelete}
       />

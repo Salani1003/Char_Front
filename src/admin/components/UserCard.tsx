@@ -1,5 +1,8 @@
 import { CalendarDays, Clock, Pencil, Trash2 } from "lucide-react";
+import { PERMISSIONS, useCan } from "@/auth/lib/permissions";
+import { useAuthStore } from "@/auth/store/auth.store";
 import { ActionsMenu } from "@/components/char/actions-menu";
+import type { ActionsMenuItem } from "@/components/char/actions-menu";
 import { Badge } from "@/components/char/badge";
 import { EntityCard } from "@/components/char/entity-card";
 import type { User } from "../interfaces/user.interface";
@@ -14,14 +17,16 @@ const dateTimeFormat = new Intl.DateTimeFormat("es-AR", {
 /**
  * Tarjeta de un usuario del sistema para el listado de `UsersPage`. Adapta un
  * `User` a la `EntityCard` genérica: nombre, email, estado (activo/inactivo),
- * roles (grupos asignados), fecha de alta y último acceso. Incluye un menú de tres puntitos con las
- * opciones "Editar" y "Eliminar".
+ * roles (grupos asignados), fecha de alta y último acceso. Incluye un menú de
+ * tres puntitos con las opciones permitidas por `can`: "Editar"
+ * (`users.change_user`) y "Desactivar" (`users.delete_user`; no aparece sobre
+ * el propio usuario). Sin ninguna opción permitida no muestra el menú.
  *
  * @param user Usuario a mostrar.
  * @param roles Nombres de los grupos asignados al usuario (el backend solo
  * devuelve sus ids; la pantalla los resuelve con `useGroups`).
  * @param onEdit Se llama con el usuario al elegir "Editar".
- * @param onDelete Se llama con el usuario al elegir "Eliminar".
+ * @param onDelete Se llama con el usuario al elegir "Desactivar".
  */
 export function UserCard({
   user,
@@ -35,6 +40,25 @@ export function UserCard({
   onDelete: (user: User) => void;
 }) {
   const fullName = getUserFullName(user);
+  const can = useCan();
+  const isSelf = useAuthStore((state) => state.user?.id) === user.id;
+  const items: ActionsMenuItem[] = [];
+  if (can(PERMISSIONS.users.change)) {
+    items.push({
+      label: "Editar",
+      icon: <Pencil />,
+      onSelect: () => onEdit(user),
+    });
+  }
+  // Nadie puede desactivar su propio usuario.
+  if (can(PERMISSIONS.users.delete) && !isSelf) {
+    items.push({
+      label: "Desactivar",
+      icon: <Trash2 />,
+      onSelect: () => onDelete(user),
+      variant: "danger",
+    });
+  }
 
   return (
     <EntityCard
@@ -46,18 +70,9 @@ export function UserCard({
         </Badge>
       }
       menu={
-        <ActionsMenu
-          label={`Acciones de ${fullName}`}
-          items={[
-            { label: "Editar", icon: <Pencil />, onSelect: () => onEdit(user) },
-            {
-              label: "Eliminar",
-              icon: <Trash2 />,
-              onSelect: () => onDelete(user),
-              variant: "danger",
-            },
-          ]}
-        />
+        items.length ? (
+          <ActionsMenu label={`Acciones de ${fullName}`} items={items} />
+        ) : undefined
       }
       details={[
         {

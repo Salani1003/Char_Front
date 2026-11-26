@@ -10,7 +10,8 @@ import { useAuthStore } from "../store/auth.store";
  * panel (`AdminLayoutSkeleton`) — así una sesión con tokens vencidos o revocados no deja entrar al
  * panel. Recién con la sesión validada renderiza el `Outlet` (las rutas de
  * `/admin`). Se usa como `element` del nodo padre de las rutas protegidas en
- * `app.router.tsx`.
+ * `app.router.tsx`. También renueva el usuario (`refreshUser`, o sea sus
+ * permisos) cada vez que la pestaña vuelve a estar visible.
  */
 export const ProtectedRoute = () => {
   const status = useAuthStore((state) => state.status);
@@ -19,6 +20,16 @@ export const ProtectedRoute = () => {
   useEffect(() => {
     if (status === "authenticated" && !sessionVerified) void verifySession();
   }, [status, sessionVerified, verifySession]);
+  // Los permisos pueden cambiar con la sesión abierta: al volver a la pestaña
+  // se vuelven a pedir.
+  const refreshUser = useAuthStore((state) => state.refreshUser);
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") void refreshUser();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [refreshUser]);
   if (status !== "authenticated") {
     return <Navigate to="/auth/login" replace />;
   }

@@ -9,6 +9,8 @@ import {
   UsersPage,
 } from "./app.lazy";
 import { ProtectedRoute } from "./auth/components/ProtectedRoute";
+import { RequirePermission } from "./auth/components/RequirePermission";
+import { PERMISSIONS } from "./auth/lib/permissions";
 import { PublicRoute } from "./auth/components/PublicRoute";
 import { RouteErrorPage } from "./error/pages/RouteErrorPage";
 export const appRouter = createBrowserRouter([
@@ -27,11 +29,19 @@ export const appRouter = createBrowserRouter([
           },
           {
             path: "clients",
-            element: <ClientsPage />,
+            element: (
+              <RequirePermission permission={PERMISSIONS.clients.view}>
+                <ClientsPage />
+              </RequirePermission>
+            ),
           },
           {
             path: "users",
-            element: <UsersPage />,
+            element: (
+              <RequirePermission permission={PERMISSIONS.users.view}>
+                <UsersPage />
+              </RequirePermission>
+            ),
           },
         ],
       },

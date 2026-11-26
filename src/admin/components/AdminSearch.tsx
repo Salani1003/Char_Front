@@ -3,6 +3,7 @@ import type { KeyboardEvent } from "react";
 import { Search } from "lucide-react";
 import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
+import { useCan } from "@/auth/lib/permissions";
 import { adminNavItems } from "../config/admin-nav";
 import type { AdminNavItem } from "../config/admin-nav";
 
@@ -17,13 +18,14 @@ const isTypingTarget = (target: EventTarget | null) =>
 
 /**
  * Buscador del header del backoffice: sugiere pantallas (las de
- * `adminNavItems`) mientras se escribe, sin distinguir tildes ni mayúsculas, y
+ * `adminNavItems` que el usuario puede ver, según `can`) mientras se escribe, sin distinguir tildes ni mayúsculas, y
  * navega a la elegida. Es un combobox accesible: flechas arriba/abajo para
  * moverse, Enter para ir, Escape para cerrar. El atajo `/` (fuera de un campo
  * de texto) enfoca el buscador.
  */
 export function AdminSearch() {
   const navigate = useNavigate();
+  const can = useCan();
   const listId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
@@ -32,7 +34,11 @@ export function AdminSearch() {
 
   const term = normalize(query);
   const results: AdminNavItem[] = term
-    ? adminNavItems.filter((item) => normalize(item.label).includes(term))
+    ? adminNavItems.filter(
+        (item) =>
+          (!item.permission || can(item.permission)) &&
+          normalize(item.label).includes(term),
+      )
     : [];
   const showList = open && query.trim() !== "";
 

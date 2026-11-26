@@ -1,7 +1,7 @@
 import axios from "axios";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { User } from "@/admin/interfaces/user.interface";
+import type { CurrentUser } from "@/admin/interfaces/user.interface";
 import { loginAction } from "../actions/login.action";
 import { getCurrentUserAction } from "../actions/get-current-user.action";
 import { logoutAction } from "../actions/logout.action";
@@ -11,7 +11,7 @@ interface AuthState {
   // Properties
   access?: string;
   refresh?: string;
-  user?: User;
+  user?: CurrentUser;
   errorMessage?: string;
   /**
    * `true` cuando la sesión ya se validó contra el backend en esta carga de
@@ -23,6 +23,7 @@ interface AuthState {
   logout: () => Promise<void>;
   clearSession: () => void;
   verifySession: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   setTokens: (access: string, refresh: string) => void;
 }
 const EMPTY_SESSION = {
@@ -35,6 +36,8 @@ const EMPTY_SESSION = {
 };
 /** Validación en curso (compartida: React StrictMode monta el guard dos veces). */
 let verifying: Promise<void> | null = null;
+/** Renovación de permisos en curso (evita pedidos en paralelo). */
+let refreshing: Promise<void> | null = null;
 /**
  * Store de autenticación (Zustand). Mantiene el estado de sesión
  * (`status`) y los tokens de acceso/refresco emitidos por la API
@@ -51,7 +54,9 @@ let verifying: Promise<void> | null = null;
  * `GET /users/me/` (el interceptor renueva el access si hace falta): si el
  * backend la rechaza limpia la sesión, y si no hay conexión la conserva.
  * `sessionVerified` (no persistido) indica que ya se validó en esta carga y
- * lo usa `ProtectedRoute`. `setTokens` reemplaza el par `access`/`refresh`; lo usa
+ * lo usa `ProtectedRoute`. `refreshUser` vuelve a pedir `/users/me/` para renovar `is_superuser` y
+ * `permissions` con la sesión abierta (best-effort; lo usan `ProtectedRoute` al
+ * volver a la pestaña y el interceptor de `charApi` ante un 403). `setTokens` reemplaza el par `access`/`refresh`; lo usa
  * el interceptor de respuesta de `charApi` (fuera de React, vía
  * `useAuthStore.getState()`) cuando renueva la sesión tras un 401. Hay
  * que guardar también el `refresh`: el backend rota el refresh token en
@@ -114,6 +119,20 @@ export const useAuthStore = create<AuthState>()(
           verifying = null;
         });
         return verifying;
+      },
+      refreshUser: () => {
+        if (get().status !== "authenticated") return Promise.resolve();
+        refreshing ??= getCurrentUserAction()
+          .then((user) => {
+            set({ user });
+          })
+          .catch(() => {
+            // Best-effort: un 401 ya lo maneja el interceptor (limpia la sesión).
+          })
+          .finally(() => {
+            refreshing = null;
+          });
+        return refreshing;
       },
       setTokens: (access, refresh) => {
         set({ access, refresh });

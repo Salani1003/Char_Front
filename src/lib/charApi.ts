@@ -12,7 +12,9 @@ import { refreshAction } from "@/auth/actions/refresh.action";
  * de `/auth/token/` o `/auth/token/refresh/` (login / refresh) no dispara la
  * renovación. Si el refresh falla (o no hay `refresh` token), limpia la sesión
  * local con `clearSession` de `useAuthStore` (sin llamar al backend) — lo
- * que hace que `ProtectedRoute` redirija a `/auth/login`.
+ * que hace que `ProtectedRoute` redirija a `/auth/login`. Ante un 403 (que no
+ * sea de `/users/me/`) vuelve a pedir el usuario con `refreshUser` para
+ * renovar sus permisos.
  */
 const charApi = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -49,6 +51,14 @@ charApi.interceptors.response.use(
     const originalRequest = error.config as RetriableRequestConfig | undefined;
     // `/auth/token/` (login) y `/auth/token/refresh/`: un 401 ahí no es una
     // sesión vencida, así que no se intenta renovar.
+    // Un 403 significa que los permisos pudieron cambiar: se renuevan (la UI
+    // se actualiza sola) y el error se propaga igual a quien hizo el request.
+    if (
+      error.response?.status === 403 &&
+      !originalRequest?.url?.includes("/users/me/")
+    ) {
+      void useAuthStore.getState().refreshUser();
+    }
     const isAuthCall = originalRequest?.url?.includes("/auth/token/");
     if (
       error.response?.status !== 401 ||

@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCan } from "@/auth/lib/permissions";
 import { useAuthStore } from "@/auth/store/auth.store";
 import { ActionsMenu } from "@/components/char/actions-menu";
 import {
@@ -27,7 +28,8 @@ import { getUserFullName } from "../utils/getUserFullName";
  * Marco compartido por todas las pantallas de administración (dashboard,
  * clientes, usuarios, etc.). Muestra la navegación primaria de Char en un
  * panel oscuro (`Sidebar`) — logo + wordmark "Char Tienda" y los enlaces de
- * `adminNavItems` (`admin/config/admin-nav.ts`), resaltando el activo con el
+ * `adminNavItems` (`admin/config/admin-nav.ts`) que el usuario puede ver — los
+ * módulos con `permission` solo aparecen si `can(permission)` —, resaltando el activo con el
  * estilo del kit de referencia (franja + fondo en tinte accent) — y una barra
  * superior (`Header`) con el buscador de pantallas (`AdminSearch`),
  * notificaciones y el usuario autenticado (avatar con sus iniciales y su
@@ -53,6 +55,10 @@ const CharAdminLayout = () => {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
+  const can = useCan();
+  const visibleNavItems = adminNavItems.filter(
+    (item) => !item.permission || can(item.permission),
+  );
   const handleLogout = async () => {
     await logout();
     void navigate("/auth/login", { replace: true });
@@ -123,7 +129,7 @@ const CharAdminLayout = () => {
           </button>
         </div>
         <nav className="flex flex-1 flex-col gap-1">
-          {adminNavItems.map(({ to, label, icon: Icon, end }) => (
+          {visibleNavItems.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}

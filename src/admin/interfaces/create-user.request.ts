@@ -3,5 +3,6 @@ export interface CreateUserRequest {
   password: string;
   first_name: string;
   last_name: string;
-  groups: number[];
+  /** Se omite si el usuario no tiene `auth.view_group`. */
+  groups?: number[];
 }

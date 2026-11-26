@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import { PERMISSIONS } from "@/auth/lib/permissions";
 import { LayoutDashboard, UserCog, Users } from "lucide-react";
 
 export interface AdminNavItem {
@@ -9,12 +10,15 @@ export interface AdminNavItem {
   end: boolean;
   /** Frase corta que explica para qué sirve la pantalla (la usa el Dashboard). */
   description: string;
+  /** Permiso de "ver" del módulo; sin él no aparece en el menú. Sin permiso = siempre visible. */
+  permission?: string;
 }
 
 /**
  * Pantallas del backoffice. Es la única fuente de la navegación: la usan el
  * panel lateral de `CharAdminLayout` y el buscador del header (`AdminSearch`).
- * Para agregar una pantalla al menú, agregarla acá.
+ * Cada módulo declara su permiso de "ver" (`permission`) y solo se muestra a
+ * quien lo tiene (`can`). Para agregar una pantalla al menú, agregarla acá.
  */
 export const adminNavItems: AdminNavItem[] = [
   {
@@ -30,6 +34,7 @@ export const adminNavItems: AdminNavItem[] = [
     icon: Users,
     end: false,
     description: "Consultá y administrá la cartera de clientes.",
+    permission: PERMISSIONS.clients.view,
   },
   {
     to: "/admin/users",
@@ -37,5 +42,6 @@ export const adminNavItems: AdminNavItem[] = [
     icon: UserCog,
     end: false,
     description: "Quién accede al sistema y con qué permisos.",
+    permission: PERMISSIONS.users.view,
   },
 ];

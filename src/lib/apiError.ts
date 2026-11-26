@@ -47,8 +47,33 @@ export class ApiError extends Error {
   }
 }
 
-/** Convierte cualquier error capturado en un `ApiError`. */
+/** Texto por defecto de DRF para un 403 (no aporta nada al usuario). */
+const DRF_FORBIDDEN = "You do not have permission to perform this action.";
+
+/**
+ * Convierte cualquier error capturado en un `ApiError`. Ante un 403 conserva
+ * el mensaje del backend si es específico; si es el genérico de DRF (o no hay)
+ * usa "No tenés permiso para esta acción".
+ */
 export function toApiError(error: unknown): ApiError {
+  const apiError = parseApiError(error);
+  if (
+    axios.isAxiosError(error) &&
+    error.response?.status === 403 &&
+    (!apiError.message ||
+      apiError.message === DRF_FORBIDDEN ||
+      apiError.message === error.message)
+  ) {
+    return new ApiError(
+      "No tenés permiso para esta acción",
+      {},
+      { cause: error },
+    );
+  }
+  return apiError;
+}
+
+function parseApiError(error: unknown): ApiError {
   if (error instanceof ApiError) return error;
 
   if (!axios.isAxiosError(error)) {
