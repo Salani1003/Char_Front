@@ -22,6 +22,16 @@ const FILTERS: FilterDefinition[] = [
       { value: "seller", label: "Vendedor" },
     ],
   },
+  {
+    key: "origin",
+    type: "multiselect",
+    label: "Origen",
+    options: [
+      { value: "instagram", label: "Instagram" },
+      { value: "google", label: "Google" },
+      { value: "other", label: "Otro" },
+    ],
+  },
   { key: "name", type: "text", label: "Nombre", placeholder: "Buscar…" },
   { key: "since", type: "date", label: "Desde" },
   { key: "verified", type: "checkbox", label: "Solo verificados" },
@@ -42,5 +52,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 export const WithActiveFilters: Story = {
-  args: { value: { status: "active", verified: "true" } },
+  args: {
+    value: { status: "active", verified: "true", origin: "instagram,google" },
+  },
 };

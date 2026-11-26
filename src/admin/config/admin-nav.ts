@@ -29,19 +29,19 @@ export const adminNavItems: AdminNavItem[] = [
     description: "Resumen de la actividad de Char.",
   },
   {
-    to: "/admin/clients",
-    label: "Clientes",
-    icon: Users,
-    end: false,
-    description: "Consultá y administrá la cartera de clientes.",
-    permission: PERMISSIONS.clients.view,
-  },
-  {
     to: "/admin/users",
     label: "Usuarios",
     icon: UserCog,
     end: false,
     description: "Quién accede al sistema y con qué permisos.",
     permission: PERMISSIONS.users.view,
+  },
+  {
+    to: "/admin/clients",
+    label: "Clientes",
+    icon: Users,
+    end: false,
+    description: "Consultá y administrá la cartera de clientes.",
+    permission: PERMISSIONS.clients.view,
   },
 ];

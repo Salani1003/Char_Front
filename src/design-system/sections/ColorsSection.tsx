@@ -44,6 +44,7 @@ export function ColorsSection() {
   const warning = readCssTokens("--char-warning");
   const danger = readCssTokens("--char-danger");
   const info = readCssTokens("--char-info");
+  const origin = readCssTokens("--char-origin-");
   const semantic = readNamedCssTokens(SEMANTIC_NAMES);
   const semanticByName = new Map(semantic.map((t) => [t.name, t]));
   const rawGroups: Array<{ title: string; tokens: typeof cream }> = [
@@ -55,6 +56,7 @@ export function ColorsSection() {
     { title: "Warning", tokens: warning },
     { title: "Danger", tokens: danger },
     { title: "Info", tokens: info },
+    { title: "Client origin", tokens: origin },
   ];
   return (
     <DocSection

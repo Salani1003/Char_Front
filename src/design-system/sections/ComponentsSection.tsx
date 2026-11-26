@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/char/card";
 import { Checkbox } from "@/components/char/checkbox";
+import { DataTable } from "@/components/char/data-table";
 import { Dialog } from "@/components/char/dialog";
 import { EntityCard } from "@/components/char/entity-card";
 import { Input } from "@/components/char/input";
@@ -64,6 +65,7 @@ export function ComponentsSection() {
   const [filters, setFilters] = useState<FilterValues>({});
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [ordering, setOrdering] = useState("-created_at");
   const [alertVariant, setAlertVariant] =
     useState<CharAlertDialogVariant | null>(null);
   return (
@@ -446,6 +448,16 @@ export function ComponentsSection() {
                   { value: "inactive", label: "Inactivos" },
                 ],
               },
+              {
+                key: "origin",
+                type: "multiselect",
+                label: "Origen",
+                options: [
+                  { value: "instagram", label: "Instagram" },
+                  { value: "google", label: "Google" },
+                  { value: "other", label: "Otro" },
+                ],
+              },
               { key: "since", type: "date", label: "Desde" },
               { key: "verified", type: "checkbox", label: "Solo verificados" },
             ]}
@@ -453,6 +465,47 @@ export function ComponentsSection() {
             onChange={setFilters}
           />
         </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <DocSubheading>DataTable</DocSubheading>
+        <DataTable
+          caption="Clientes de ejemplo"
+          ordering={ordering}
+          onOrderingChange={setOrdering}
+          getRowKey={(row) => row.email}
+          rows={[
+            {
+              name: "Lucía Fernández",
+              email: "lucia@mail.com",
+              origin: "Instagram",
+            },
+            {
+              name: "Martín Gómez",
+              email: "martin@mail.com",
+              origin: "Google",
+            },
+          ]}
+          columns={[
+            {
+              key: "name",
+              header: "Nombre",
+              sortable: true,
+              cell: (row) => row.name,
+            },
+            {
+              key: "email",
+              header: "Email",
+              sortable: true,
+              cell: (row) => row.email,
+            },
+            {
+              key: "origin",
+              header: "Origen",
+              cell: (row) => <Badge variant="outline">{row.origin}</Badge>,
+            },
+          ]}
+        />
       </div>
 
       <div className="flex flex-col gap-3">

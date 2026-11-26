@@ -50,6 +50,24 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
+  --color-border-soft: var(--border-soft);
+
+  /* Origen del cliente: text-origin-<canal> / bg-origin-<canal>-bg */
+  --color-origin-instagram: var(--char-origin-instagram);
+  --color-origin-instagram-bg: var(--char-origin-instagram-bg);
+  --color-origin-facebook: var(--char-origin-facebook);
+  --color-origin-facebook-bg: var(--char-origin-facebook-bg);
+  --color-origin-tiktok: var(--char-origin-tiktok);
+  --color-origin-tiktok-bg: var(--char-origin-tiktok-bg);
+  --color-origin-google: var(--char-origin-google);
+  --color-origin-google-bg: var(--char-origin-google-bg);
+  --color-origin-referral: var(--char-origin-referral);
+  --color-origin-referral-bg: var(--char-origin-referral-bg);
+  --color-origin-physical-store: var(--char-origin-physical-store);
+  --color-origin-physical-store-bg: var(--char-origin-physical-store-bg);
+  --color-origin-other: var(--char-origin-other);
+  --color-origin-other-bg: var(--char-origin-other-bg);
+
   --color-input: var(--input);
   --color-ring: var(--ring);
 

@@ -22,6 +22,7 @@ import type {
   FilterOption,
   FilterValues,
 } from "./filters.types";
+import { joinMultiValue, parseMultiValue } from "./filters.utils";
 
 /** Valor interno de "Todos" en el select (el select no admite `''`). */
 const ALL = "__all__";
@@ -66,6 +67,54 @@ function ChipGroup({
   );
 }
 
+function MultiChipGroup({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: FilterOption[];
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const selected = parseMultiValue(value);
+  const toggle = (optionValue: string) =>
+    onChange(
+      joinMultiValue(
+        selected.includes(optionValue)
+          ? selected.filter((v) => v !== optionValue)
+          : options
+              .map((o) => o.value)
+              .filter((v) => v === optionValue || selected.includes(v)),
+      ),
+    );
+  return (
+    <div role="group" aria-label={label} className="flex flex-wrap gap-2">
+      {options.map((option) => {
+        const pressed = selected.includes(option.value);
+        return (
+          <button
+            key={option.value}
+            type="button"
+            aria-pressed={pressed}
+            onClick={() => toggle(option.value)}
+            className={cn(
+              "inline-flex h-8 items-center gap-1.5 rounded-full border px-3.5 text-sm font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+              pressed
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border bg-card text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {pressed ? <Check className="size-3.5" aria-hidden /> : null}
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function FilterField({
   filter,
   value,
@@ -79,6 +128,15 @@ function FilterField({
     case "chips":
       return (
         <ChipGroup
+          label={filter.label}
+          options={filter.options}
+          value={value}
+          onChange={onChange}
+        />
+      );
+    case "multiselect":
+      return (
+        <MultiChipGroup
           label={filter.label}
           options={filter.options}
           value={value}
@@ -144,8 +202,10 @@ function FilterField({
 /**
  * Botón "Filtros" de Char que despliega un panel con los filtros configurados.
  * Es genérico: los filtros se describen con un arreglo de `FilterDefinition`
- * (`chips`, `select`, `text`, `date` o `checkbox`) y el valor es un
- * `Record<clave, string>` (un filtro vacío está inactivo). Los cambios se
+ * (`chips`, `select`, `multiselect`, `text`, `date` o `checkbox`) y el valor
+ * es un `Record<clave, string>` (un filtro vacío está inactivo; el
+ * `multiselect` guarda sus opciones separadas por coma, ver `parseMultiValue`
+ * y `joinMultiValue`). Los cambios se
  * editan en un borrador y solo se aplican con "Aplicar"; "Limpiar" quita todos.
  * El botón muestra cuántos filtros hay activos.
  *

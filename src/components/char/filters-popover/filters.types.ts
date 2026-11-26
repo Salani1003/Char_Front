@@ -22,6 +22,16 @@ export interface SelectFilter extends BaseFilter {
   placeholder?: string;
 }
 
+/**
+ * Selección múltiple con opciones en forma de chips (se pueden marcar varias;
+ * ninguna = filtro inactivo). El valor es la lista separada por comas
+ * (`"instagram,google"`): usar `parseMultiValue` / `joinMultiValue`.
+ */
+export interface MultiSelectFilter extends BaseFilter {
+  type: "multiselect";
+  options: FilterOption[];
+}
+
 export interface TextFilter extends BaseFilter {
   type: "text";
   placeholder?: string;
@@ -38,7 +48,15 @@ export interface DateFilter extends BaseFilter {
 }
 
 export type FilterDefinition =
-  ChipsFilter | SelectFilter | TextFilter | CheckboxFilter | DateFilter;
+  | ChipsFilter
+  | SelectFilter
+  | MultiSelectFilter
+  | TextFilter
+  | CheckboxFilter
+  | DateFilter;
 
-/** Valores por clave. Un filtro sin valor (o `''`) se considera inactivo. */
+/**
+ * Valores por clave. Un filtro sin valor (o `''`) se considera inactivo. Los
+ * `multiselect` guardan sus opciones separadas por coma.
+ */
 export type FilterValues = Record<string, string>;

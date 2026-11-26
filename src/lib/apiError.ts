@@ -53,10 +53,18 @@ const DRF_FORBIDDEN = "You do not have permission to perform this action.";
 /**
  * Convierte cualquier error capturado en un `ApiError`. Ante un 403 conserva
  * el mensaje del backend si es específico; si es el genérico de DRF (o no hay)
- * usa "No tenés permiso para esta acción".
+ * usa "No tenés permiso para esta acción". Un 429 (throttling) siempre avisa
+ * que hay que esperar y reintentar, porque el texto de DRF viene en inglés.
  */
 export function toApiError(error: unknown): ApiError {
   const apiError = parseApiError(error);
+  if (axios.isAxiosError(error) && error.response?.status === 429) {
+    return new ApiError(
+      "Hiciste demasiadas solicitudes seguidas. Esperá unos segundos y volvé a intentar.",
+      {},
+      { cause: error },
+    );
+  }
   if (
     axios.isAxiosError(error) &&
     error.response?.status === 403 &&

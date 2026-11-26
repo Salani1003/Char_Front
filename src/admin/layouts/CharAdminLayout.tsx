@@ -167,7 +167,7 @@ const CharAdminLayout = () => {
           ))}
         </nav>
       </aside>
-      <div className="flex min-h-screen flex-1 flex-col">
+      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
         <header className="flex h-16 shrink-0 items-center gap-4 border-b border-border bg-card px-5 md:h-(--header-height)">
           <button
             type="button"
@@ -215,7 +215,7 @@ const CharAdminLayout = () => {
             </div>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-5 md:p-8">
+        <main className="min-w-0 flex-1 overflow-y-auto p-5 md:p-8">
           <Suspense fallback={<PageSkeleton />}>
             <Outlet />
           </Suspense>

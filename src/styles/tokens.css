@@ -66,6 +66,24 @@
   --char-info-bg: rgba(54, 96, 201, 0.1);
   --char-neutral-bg: rgba(138, 143, 150, 0.14);
 
+  /* Origen del cliente (chips de `ClientOriginBadge`). Redes: tono de la
+     identidad de cada marca, oscurecido lo justo para que el texto contraste
+     (>= 4.5:1) sobre su fondo tenue. Resto: tonos sobrios de la paleta. */
+  --char-origin-instagram: #a92b75;
+  --char-origin-instagram-bg: rgba(193, 53, 132, 0.12);
+  --char-origin-facebook: #1459c7;
+  --char-origin-facebook-bg: rgba(22, 101, 216, 0.12);
+  --char-origin-tiktok: var(--char-cream-50);
+  --char-origin-tiktok-bg: #161823;
+  --char-origin-google: #c5221f;
+  --char-origin-google-bg: rgba(197, 34, 31, 0.1);
+  --char-origin-referral: #2f6a43;
+  --char-origin-referral-bg: var(--char-success-bg);
+  --char-origin-physical-store: #7a5812;
+  --char-origin-physical-store-bg: var(--char-warning-bg);
+  --char-origin-other: var(--char-slate-600);
+  --char-origin-other-bg: var(--char-neutral-bg);
+
   /* ---------------------------------------------------------------------
    * Color — semantic roles (what components/screens should reference)
    * ------------------------------------------------------------------- */
