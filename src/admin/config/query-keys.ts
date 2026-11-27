@@ -46,3 +46,21 @@ export const productVariantKeys = {
 export const catalogLookupKeys = {
   all: ["catalog-lookup"] as const,
 };
+
+/**
+ * Stock (`/stock/`): la grilla de saldos (`list`) y las tarjetas de resumen
+ * (`summary`). Cualquier movimiento, recuento o cambio de stock mínimo
+ * invalida `all`.
+ */
+export const stockKeys = {
+  all: ["stock"] as const,
+  list: (params: object = {}) => ["stock", "list", params] as const,
+  summary: () => ["stock", "summary"] as const,
+  level: (variantId: number | null) => ["stock", "level", variantId] as const,
+  operations: (params: object = {}) => ["stock", "operations", params] as const,
+  operation: (id: number | null) => ["stock", "operation", id] as const,
+  counts: (params: object = {}) => ["stock", "counts", params] as const,
+  count: (id: number | null) => ["stock", "count", id] as const,
+  /** Todos los saldos juntos (recuentos en borrador). */
+  allLevels: () => ["stock", "all-levels"] as const,
+};

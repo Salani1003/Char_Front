@@ -3,16 +3,19 @@ import { Badge } from "@/components/char/badge";
 import { DataTable } from "@/components/char/data-table";
 import type { DataTableColumn } from "@/components/char/data-table";
 import { PERMISSIONS, useCan } from "@/auth/lib/permissions";
+import { StockStatusBadge } from "./StockStatusBadge";
 import { VariantColor } from "./VariantColor";
 import { VariantPhoto } from "./VariantPhoto";
 import { VariantPrice } from "./VariantPrice";
+import { VariantStock } from "./VariantStock";
 import type { ProductVariant } from "../interfaces/product-variant.interface";
 
 /**
  * Tabla de variantes de `ProductsPage`: Foto (miniatura de la principal del color, solo con `view_productimage`), SKU, producto (enlace a su edición, con categoría y marca/
- * modelo debajo), color (con muestra), talle, precio vigente (`VariantPrice`)
+ * modelo debajo), color (con muestra), talle, precio vigente (`VariantPrice`),
+ * stock (una sola columna: `VariantStock` + `StockStatusBadge` —Sin stock / Stock bajo / En stock—, a la derecha del precio, ordenable por `quantity`; solo con `stock.view_stocklevel`)
  * y estado de publicación. Ordena por columna con los campos de la API
- * (`sku`, `product__name`, `color__name`, `size__order`, `effective_price`);
+ * (`sku`, `product__name`, `color__name`, `size__order`, `effective_price`, `quantity`);
  * el precio ordena por `effective_price`, el que se ve. Es la vista de
  * escritorio: en celulares `ProductsPage` muestra `ProductVariantsCardList`.
  *
@@ -38,7 +41,9 @@ export function ProductVariantsTable({
   dimmed?: boolean;
   className?: string;
 }) {
-  const canViewImages = useCan()(PERMISSIONS.products.productImage.view);
+  const can = useCan();
+  const canViewImages = can(PERMISSIONS.products.productImage.view);
+  const canViewStock = can(PERMISSIONS.stock.level.view);
   const columns: DataTableColumn<ProductVariant>[] = [
     ...(canViewImages
       ? [
@@ -93,6 +98,28 @@ export function ProductVariantsTable({
       sortable: true,
       cell: (v) => <VariantPrice variant={v} />,
     },
+    ...(canViewStock
+      ? [
+          {
+            key: "quantity",
+            header: "Stock",
+            sortable: true,
+            cell: (v: ProductVariant) => (
+              <span className="inline-flex items-center gap-3">
+                <VariantStock variant={v} />
+                {v.quantity !== undefined ? (
+                  <StockStatusBadge
+                    level={{
+                      quantity: v.quantity,
+                      is_low_stock: v.is_low_stock ?? false,
+                    }}
+                  />
+                ) : null}
+              </span>
+            ),
+          },
+        ]
+      : []),
     {
       key: "is_published",
       header: "Estado",

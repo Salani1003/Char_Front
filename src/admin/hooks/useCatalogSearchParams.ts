@@ -17,6 +17,7 @@ export const CATALOG_ORDERING_FIELDS = [
   "size__order",
   "effective_price",
   "product__sale_price",
+  "quantity",
 ] as const;
 
 /** Criterios de la grilla de catálogo que se reflejan en la URL. */

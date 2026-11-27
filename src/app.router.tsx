@@ -5,10 +5,15 @@ import {
   ClientsPage,
   DashboardPage,
   DesignSystemPage,
+  InventoryPage,
   LoginPage,
   ProductEditPage,
   ProductNewPage,
   ProductsPage,
+  StockCountNewPage,
+  StockCountPage,
+  StockMovementNewPage,
+  StockOperationPage,
   UsersPage,
 } from "./app.lazy";
 import { ProtectedRoute } from "./auth/components/ProtectedRoute";
@@ -82,6 +87,78 @@ export const appRouter = createBrowserRouter([
                     permission={PERMISSIONS.products.product.view}
                   >
                     <ProductEditPage />
+                  </RequirePermission>
+                ),
+              },
+            ],
+          },
+          {
+            path: "inventory",
+            handle: {
+              crumb: navCrumb("/admin/inventory"),
+            } satisfies AdminRouteHandle,
+            children: [
+              {
+                index: true,
+                element: (
+                  <RequirePermission permission={PERMISSIONS.stock.level.view}>
+                    <InventoryPage />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: "movements/new",
+                handle: {
+                  crumb: () => ({ label: "Nuevo movimiento" }),
+                } satisfies AdminRouteHandle,
+                element: (
+                  <RequirePermission
+                    permission={PERMISSIONS.stock.movement.add}
+                  >
+                    <RequirePermission
+                      permission={PERMISSIONS.stock.level.view}
+                    >
+                      <StockMovementNewPage />
+                    </RequirePermission>
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: "counts/new",
+                handle: {
+                  crumb: () => ({ label: "Nuevo recuento" }),
+                } satisfies AdminRouteHandle,
+                element: (
+                  <RequirePermission permission={PERMISSIONS.stock.count.add}>
+                    <RequirePermission
+                      permission={PERMISSIONS.stock.count.view}
+                    >
+                      <StockCountNewPage />
+                    </RequirePermission>
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: "counts/:id",
+                handle: {
+                  crumb: () => ({ label: "Recuento" }),
+                } satisfies AdminRouteHandle,
+                element: (
+                  <RequirePermission permission={PERMISSIONS.stock.count.view}>
+                    <StockCountPage />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: "operations/:id",
+                handle: {
+                  crumb: () => ({ label: "Operación" }),
+                } satisfies AdminRouteHandle,
+                element: (
+                  <RequirePermission
+                    permission={PERMISSIONS.stock.movement.view}
+                  >
+                    <StockOperationPage />
                   </RequirePermission>
                 ),
               },

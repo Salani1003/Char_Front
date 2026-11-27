@@ -39,6 +39,12 @@ export const PERMISSIONS = {
     /** Ver y editar el precio de costo de un producto. */
     costPrice: "products.view_cost_price",
   },
+  /** Módulo de stock: saldo, movimientos (historial) y recuentos. */
+  stock: {
+    level: crud("stock", "stocklevel"),
+    movement: crud("stock", "stockmovement"),
+    count: crud("stock", "stockcount"),
+  },
   groups: {
     view: "auth.view_group",
   },

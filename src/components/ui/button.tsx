@@ -16,6 +16,8 @@ const buttonVariants = cva(
           "border-info/40 bg-info/15 text-info shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] backdrop-blur-sm hover:border-info/60 hover:bg-info/25 aria-expanded:bg-info/25",
         magenta:
           "border-magenta/40 bg-magenta/15 text-magenta shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] backdrop-blur-sm hover:border-magenta/60 hover:bg-magenta/25 aria-expanded:bg-magenta/25",
+        success:
+          "border-success/60 bg-success/70 text-success-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] hover:bg-success/85 aria-expanded:bg-success/85",
         ghost:
           "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
         "ghost-danger":
@@ -23,7 +25,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         danger:
-          "bg-danger text-danger-foreground hover:bg-[color-mix(in_oklch,var(--color-danger),black_12%)]",
+          "border-danger/60 bg-danger/70 text-danger-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] hover:bg-danger/85",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {

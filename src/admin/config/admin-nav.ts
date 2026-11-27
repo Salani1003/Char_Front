@@ -1,6 +1,12 @@
 import type { LucideIcon } from "lucide-react";
 import { PERMISSIONS } from "@/auth/lib/permissions";
-import { LayoutDashboard, Package, UserCog, Users } from "lucide-react";
+import {
+  LayoutDashboard,
+  Package,
+  Warehouse,
+  UserCog,
+  Users,
+} from "lucide-react";
 
 export interface AdminNavItem {
   to: string;
@@ -52,5 +58,13 @@ export const adminNavItems: AdminNavItem[] = [
     description:
       "Explorá las variantes, sus precios y administrá los productos.",
     permission: PERMISSIONS.products.product.view,
+  },
+  {
+    to: "/admin/inventory",
+    label: "Inventario",
+    icon: Warehouse,
+    end: false,
+    description: "Consultá el stock de cada variante y su estado.",
+    permission: PERMISSIONS.stock.level.view,
   },
 ];

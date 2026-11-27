@@ -13,8 +13,10 @@ import {
 import { cn } from "@/lib/utils";
 import { UsersListSkeleton } from "./UsersListSkeleton";
 import { PERMISSIONS, useCan } from "@/auth/lib/permissions";
+import { StockStatusBadge } from "./StockStatusBadge";
 import { VariantColor } from "./VariantColor";
 import { VariantPrice } from "./VariantPrice";
+import { VariantStock } from "./VariantStock";
 import type { ProductVariant } from "../interfaces/product-variant.interface";
 
 /** Campos de orden y su etiqueta (claves = campos de la API). */
@@ -24,6 +26,7 @@ const ORDER_FIELDS: Record<string, string> = {
   color__name: "Color",
   size__order: "Talle",
   effective_price: "Precio",
+  quantity: "Stock",
   created_at: "Fecha de alta",
 };
 
@@ -57,7 +60,15 @@ export function ProductVariantsCardList({
   dimmed?: boolean;
   className?: string;
 }) {
-  const canViewImages = useCan()(PERMISSIONS.products.productImage.view);
+  const can = useCan();
+  const canViewImages = can(PERMISSIONS.products.productImage.view);
+  const canViewStock = can(PERMISSIONS.stock.level.view);
+  // "Stock" solo se ofrece a quien puede ver el stock.
+  const orderFields = Object.fromEntries(
+    Object.entries(ORDER_FIELDS).filter(
+      ([key]) => key !== "quantity" || canViewStock,
+    ),
+  );
   const descending = ordering.startsWith("-");
   const field = ordering.replace(/^-/, "") || "product__name";
 
@@ -68,7 +79,7 @@ export function ProductVariantsCardList({
           Ordenar por
         </span>
         <Select
-          items={ORDER_FIELDS}
+          items={orderFields}
           value={field}
           onValueChange={(next) =>
             onOrderingChange(descending ? `-${next}` : String(next))
@@ -82,7 +93,7 @@ export function ProductVariantsCardList({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {Object.entries(ORDER_FIELDS).map(([value, label]) => (
+            {Object.entries(orderFields).map(([value, label]) => (
               <SelectItem key={value} value={value}>
                 {label}
               </SelectItem>
@@ -145,6 +156,26 @@ export function ProductVariantsCardList({
                   label: "Precio",
                   value: <VariantPrice variant={v} />,
                 },
+                ...(canViewStock
+                  ? [
+                      {
+                        label: "Stock",
+                        value: (
+                          <span className="inline-flex items-center gap-2">
+                            <VariantStock variant={v} />
+                            {v.quantity !== undefined ? (
+                              <StockStatusBadge
+                                level={{
+                                  quantity: v.quantity,
+                                  is_low_stock: v.is_low_stock ?? false,
+                                }}
+                              />
+                            ) : null}
+                          </span>
+                        ),
+                      },
+                    ]
+                  : []),
               ]}
               actions={
                 <Button

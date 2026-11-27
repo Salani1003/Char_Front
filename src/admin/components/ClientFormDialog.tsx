@@ -67,7 +67,8 @@ const toFormValues = (client: Client): ClientFormValues => ({
  * como lo guarda el backend), teléfono (opcional, hasta 30) y origen
  * (obligatorio, desplegable con las etiquetas en español).
  *
- * - Sin `client`: modo alta ("Nuevo cliente"), se crea con `useCreateClient`.
+ * - Sin `client`: modo alta ("Nuevo cliente"), se crea con `useCreateClient`; "Cancelar"
+ *   usa la variante `danger` (roja) y "Crear cliente" la `success` (verde).
  *   Si el email era de un cliente eliminado el backend lo restaura con estos
  *   datos y responde igual que un alta: no es un error.
  * - Con `client`: modo edición ("Editar cliente"), el formulario se carga con
@@ -199,12 +200,16 @@ export function ClientFormDialog({
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button
             type="button"
-            variant="secondary"
+            variant={isEdit ? "secondary" : "danger"}
             onClick={() => handleOpenChange(false)}
           >
             Cancelar
           </Button>
-          <Button type="submit" disabled={isSubmitting || (isEdit && !isDirty)}>
+          <Button
+            type="submit"
+            variant={isEdit ? "primary" : "success"}
+            disabled={isSubmitting || (isEdit && !isDirty)}
+          >
             {isEdit ? "Guardar cambios" : "Crear cliente"}
           </Button>
         </div>

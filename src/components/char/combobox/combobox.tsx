@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 import { Plus, X } from "lucide-react";
 import {
   Combobox as ComboboxRoot,
@@ -58,6 +58,13 @@ export interface ComboboxProps<T> {
   getOptionLabel: (option: T) => string;
   /** Identificador estable de una opción (para compararla y como `key`). */
   getOptionKey: (option: T) => string | number;
+  /**
+   * Contenido propio de una opción en la lista (ej. una miniatura junto al
+   * texto). Recibe lo escrito para resaltar. Sin esta prop se muestra la
+   * etiqueta con lo coincidente resaltado. El campo siempre muestra el texto
+   * de `getOptionLabel`.
+   */
+  renderOption?: (option: T, query: string) => ReactNode;
   /** Encabezado del grupo de una opción; opciones consecutivas con el mismo grupo se agrupan. */
   getOptionGroup?: (option: T) => string | null | undefined;
   /**
@@ -118,6 +125,7 @@ export interface ComboboxProps<T> {
  * @param getOptionLabel Texto de una opción.
  * @param getOptionKey Identificador estable de una opción.
  * @param getOptionGroup Encabezado de grupo de una opción.
+ * @param renderOption Contenido propio de cada opción en la lista (ej. con miniatura).
  * @param onInputChange Activa el modo remoto; recibe lo escrito.
  * @param onCreate Habilita "Crear…" y el botón "+".
  * @param createLabel Texto de la fila de crear.
@@ -137,6 +145,7 @@ export function Combobox<T>({
   getOptionLabel,
   getOptionKey,
   getOptionGroup,
+  renderOption,
   onInputChange,
   onCreate,
   createLabel = (query) => `Crear «${query}»`,
@@ -295,6 +304,8 @@ export function Combobox<T>({
                                 {createLabel(trimmed)}
                               </span>
                             </>
+                          ) : renderOption ? (
+                            renderOption(entry.option, query)
                           ) : (
                             <Highlight
                               text={getOptionLabel(entry.option)}

@@ -1,7 +1,7 @@
 /**
  * Variante de producto (producto + color + talle) tal como la devuelve
  * `GET /product-variants/`. Ya trae nombres y precios resueltos. Los precios
- * son strings decimales (`"150.00"`). No incluye costo ni stock.
+ * son strings decimales (`"150.00"`). No incluye costo; el stock (`quantity`) solo viene con `stock.view_stocklevel`.
  */
 export interface ProductVariant {
   id: number;
@@ -35,6 +35,13 @@ export interface ProductVariant {
   image_url: string | null;
   /** Miniatura 400×400 de esa misma foto; `null` si no tiene. */
   thumbnail_url: string | null;
+  /**
+   * Stock actual y si está bajo (`min_stock > 0` y `quantity <= min_stock`).
+   * Los agrega el backend solo a quien puede ver el stock (`stock.view_stocklevel`);
+   * pueden faltar.
+   */
+  quantity?: number;
+  is_low_stock?: boolean;
 }
 
 /** Elemento de los catálogos auxiliares (categorías, marcas, modelos, colores, talles). */

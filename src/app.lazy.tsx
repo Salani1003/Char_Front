@@ -42,6 +42,31 @@ export const ProductEditPage = lazy(() =>
     default: m.ProductEditPage,
   })),
 );
+export const InventoryPage = lazy(() =>
+  import("./admin/pages/inventory/InventoryPage").then((m) => ({
+    default: m.InventoryPage,
+  })),
+);
+export const StockMovementNewPage = lazy(() =>
+  import("./admin/pages/inventory/StockMovementNewPage").then((m) => ({
+    default: m.StockMovementNewPage,
+  })),
+);
+export const StockCountNewPage = lazy(() =>
+  import("./admin/pages/inventory/StockCountNewPage").then((m) => ({
+    default: m.StockCountNewPage,
+  })),
+);
+export const StockCountPage = lazy(() =>
+  import("./admin/pages/inventory/StockCountPage").then((m) => ({
+    default: m.StockCountPage,
+  })),
+);
+export const StockOperationPage = lazy(() =>
+  import("./admin/pages/inventory/StockOperationPage").then((m) => ({
+    default: m.StockOperationPage,
+  })),
+);
 export const DesignSystemPage = lazy(() =>
   import("./design-system/pages/DesignSystemPage").then((m) => ({
     default: m.DesignSystemPage,

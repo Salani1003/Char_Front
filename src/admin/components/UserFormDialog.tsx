@@ -62,7 +62,8 @@ const toFormValues = (user: User): UserFormValues => ({
  * mismo tiene (`useCanAssignGroup`).
  *
  * - Sin `user`: modo alta ("Nuevo usuario"), la contraseña es obligatoria y
- *   se crea con `useCreateUser`.
+ *   se crea con `useCreateUser`. "Cancelar" usa la variante `danger` (roja) y
+ *   "Crear usuario" la `success` (verde).
  * - Con `user`: modo edición ("Editar usuario"), el formulario se carga con
  *   sus datos, la contraseña es opcional (vacía = no se cambia) y el botón de
  *   guardar solo se habilita si hubo algún cambio. Se actualiza con
@@ -195,12 +196,16 @@ export function UserFormDialog({
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button
             type="button"
-            variant="secondary"
+            variant={isEdit ? "secondary" : "danger"}
             onClick={() => handleOpenChange(false)}
           >
             Cancelar
           </Button>
-          <Button type="submit" disabled={isSubmitting || (isEdit && !isDirty)}>
+          <Button
+            type="submit"
+            variant={isEdit ? "primary" : "success"}
+            disabled={isSubmitting || (isEdit && !isDirty)}
+          >
             {isEdit ? "Guardar cambios" : "Crear usuario"}
           </Button>
         </div>
