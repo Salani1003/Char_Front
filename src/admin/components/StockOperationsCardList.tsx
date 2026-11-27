@@ -121,10 +121,7 @@ export function StockOperationsCardList({
               details={[
                 {
                   label: "Motivo",
-                  value:
-                    o.stock_count !== null
-                      ? `${o.reason_display} · Recuento #${o.stock_count}`
-                      : o.reason_display,
+                  value: o.reason_display,
                 },
                 { label: "Variantes", value: o.lines_count },
                 { label: "Unidades", value: o.units },

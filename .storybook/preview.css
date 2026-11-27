@@ -1,0 +1,5 @@
+/* CSS de Storybook: el de la app + el escaneo de las historias, para que
+   Tailwind genere las clases que solo aparecen en archivos `*.stories.tsx`. */
+@import "../src/index.css";
+@source "../src/**/*.stories.tsx";
+@source "../src/**/*.mdx";

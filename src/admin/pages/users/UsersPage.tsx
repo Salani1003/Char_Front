@@ -119,7 +119,7 @@ export const UsersPage = () => {
         description="Gestioná los usuarios del sistema y sus permisos de acceso."
         actions={
           <Can permission={PERMISSIONS.users.add}>
-            <Button onClick={openCreate}>
+            <Button variant="info" onClick={openCreate}>
               <Plus /> Nuevo usuario
             </Button>
           </Can>

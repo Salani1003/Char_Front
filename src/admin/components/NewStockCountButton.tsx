@@ -13,6 +13,7 @@ export function NewStockCountButton() {
   return (
     <Can permission={PERMISSIONS.stock.count.add}>
       <Button
+        variant="info"
         render={<Link to="/admin/inventory/counts/new" />}
         nativeButton={false}
       >

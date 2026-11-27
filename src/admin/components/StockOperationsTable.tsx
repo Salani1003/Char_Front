@@ -1,6 +1,5 @@
 import { Link } from "react-router";
 import { PERMISSIONS, useCan } from "@/auth/lib/permissions";
-import { Badge } from "@/components/char/badge";
 import { Button } from "@/components/char/button";
 import { DataTable } from "@/components/char/data-table";
 import type { DataTableColumn } from "@/components/char/data-table";
@@ -14,7 +13,7 @@ import type { StockOperation } from "../interfaces/stock-operation.interface";
 
 /**
  * Tabla del historial de stock: una fila por **operación** (fecha, tipo,
- * motivo —con "Recuento #N" si lo originó un recuento—, variantes, unidades,
+ * motivo, variantes, unidades,
  * nota y usuario) y un "Ver detalle" que abre `StockOperationPage` (o `StockCountPage` si la operación la generó un recuento y se puede verlo). Ordena por
  * `created_at`, `lines_count` y `units`. Es la vista de escritorio: en
  * celulares se muestra `StockOperationsCardList`.
@@ -61,14 +60,7 @@ export function StockOperationsTable({
     {
       key: "reason",
       header: "Motivo",
-      cell: (o) => (
-        <span className="inline-flex flex-wrap items-center gap-2">
-          {o.reason_display}
-          {o.stock_count !== null ? (
-            <Badge variant="outline">Recuento #{o.stock_count}</Badge>
-          ) : null}
-        </span>
-      ),
+      cell: (o) => o.reason_display,
     },
     {
       key: "lines_count",

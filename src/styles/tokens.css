@@ -64,6 +64,12 @@
   --char-danger-bg-soft: rgba(181, 82, 47, 0.09);
   --char-info: #3660c9;
   --char-info-bg: rgba(54, 96, 201, 0.1);
+  /* Azul de acción (botón `info`, altas del encabezado): el azul de marca
+     oscurecido 15 %, y su hover (28 %). Su gama de opacidad sale con el
+     modificador de Tailwind sobre el token: `bg-info-strong` (100 %),
+     `bg-info-strong/85`, `/70` y `/55`. */
+  --char-info-strong: color-mix(in oklch, var(--char-info), black 15%);
+  --char-info-strong-hover: color-mix(in oklch, var(--char-info), black 28%);
   --char-magenta: #b0267f;
   --char-neutral-bg: rgba(138, 143, 150, 0.14);
 

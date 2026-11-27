@@ -48,6 +48,8 @@
   --color-info: var(--info);
   --color-magenta: var(--char-magenta);
   --color-info-foreground: var(--info-foreground);
+  --color-info-strong: var(--char-info-strong);
+  --color-info-strong-hover: var(--char-info-strong-hover);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);

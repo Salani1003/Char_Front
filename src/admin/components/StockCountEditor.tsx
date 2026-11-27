@@ -327,7 +327,7 @@ export function StockCountEditor({
                     <td className="px-4 py-3 text-right tabular-nums">
                       {levels.get(line.variant)?.quantity ?? "…"}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 text-right">
                       <Input
                         type="number"
                         inputMode="numeric"

@@ -250,7 +250,7 @@ export function StockMovementForm({
                       </p>
                     ) : null}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 text-right">
                     <Input
                       type="number"
                       inputMode="numeric"

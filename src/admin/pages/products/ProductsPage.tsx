@@ -40,6 +40,7 @@ export const ProductsPage = () => {
         actions={
           <Can permission={PERMISSIONS.products.product.add}>
             <Button
+              variant="info"
               render={<Link to="/admin/products/new" />}
               nativeButton={false}
             >

@@ -14,6 +14,7 @@ const buttonVariants = cva(
           "border-border bg-card text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.6),0_1px_2px_rgba(43,49,56,0.12)] hover:border-primary/40 hover:bg-accent hover:text-primary aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         vivid:
           "border-info/40 bg-info/15 text-info shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] backdrop-blur-sm hover:border-info/60 hover:bg-info/25 aria-expanded:bg-info/25",
+        info: "bg-info-strong text-info-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_1px_2px_rgba(43,49,56,0.3),0_3px_8px_-3px_rgba(30,60,140,0.55)] hover:bg-info-strong-hover hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_6px_14px_-4px_rgba(30,60,140,0.65)]",
         magenta:
           "border-magenta/40 bg-magenta/15 text-magenta shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] backdrop-blur-sm hover:border-magenta/60 hover:bg-magenta/25 aria-expanded:bg-magenta/25",
         success:

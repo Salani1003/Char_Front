@@ -201,7 +201,7 @@ export const ClientsPage = () => {
         description="Consultá y administrá la cartera de clientes."
         actions={
           <Can permission={PERMISSIONS.clients.add}>
-            <Button onClick={openCreate}>
+            <Button variant="info" onClick={openCreate}>
               <Plus /> Nuevo cliente
             </Button>
           </Can>
@@ -255,7 +255,7 @@ export const ClientsPage = () => {
               </Button>
             ) : (
               <Can permission={PERMISSIONS.clients.add}>
-                <Button onClick={openCreate}>
+                <Button variant="info" onClick={openCreate}>
                   <Plus /> Nuevo cliente
                 </Button>
               </Can>

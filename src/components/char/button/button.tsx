@@ -4,6 +4,7 @@ const VARIANT_MAP = {
   primary: "default",
   secondary: "secondary",
   vivid: "vivid",
+  info: "info",
   magenta: "magenta",
   success: "success",
   ghost: "ghost",
@@ -27,7 +28,7 @@ type BaseButtonProps = ComponentProps<typeof BaseButton>;
  * no queden acopladas al primitivo.
  *
  * @param variant Rol visual del botón: `primary` (acción principal, color de
- * marca), `secondary` (acción alternativa), `vivid` (azul translúcido), `magenta` (misma receta translúcida que `vivid`, en magenta, para acciones de creación destacadas, ej. "Agregar variantes"), `success` (verde con un poco de transparencia —token `success`, relleno al 70 %—, para confirmar o registrar algo positivo, ej. "Registrar ingreso"), `ghost` (acción de baja
+ * marca), `secondary` (acción alternativa), `vivid` (azul translúcido), `info` (azul sólido y vivo —token `info`—, para las acciones de alta del encabezado de una pantalla, ej. "Nuevo cliente"), `magenta` (misma receta translúcida que `vivid`, en magenta, para acciones de creación destacadas, ej. "Agregar variantes"), `success` (verde con un poco de transparencia —token `success`, relleno al 70 %—, para confirmar o registrar algo positivo, ej. "Registrar ingreso"), `ghost` (acción de baja
  * jerarquía), `danger` (acción destructiva, rojo al 70 % de opacidad), `ghost-danger` (destructiva de baja jerarquía, ej. el ícono de eliminar en una fila) o `link` (aspecto de enlace).
  * @param size Tamaño del botón: `sm`, `md` (default), `lg` o `icon`.
  */

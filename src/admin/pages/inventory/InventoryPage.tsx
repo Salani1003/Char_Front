@@ -55,6 +55,7 @@ export function InventoryPage() {
             ) : (
               <Can permission={PERMISSIONS.stock.movement.add}>
                 <Button
+                  variant="info"
                   render={<Link to="/admin/inventory/movements/new" />}
                   nativeButton={false}
                 >
