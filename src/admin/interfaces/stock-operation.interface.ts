@@ -14,6 +14,10 @@ export interface StockOperation {
   note: string;
   /** Id del recuento que la originó, o `null`. */
   stock_count: number | null;
+  /** Id de la venta que la generó, o `null`. Esas operaciones no se anulan por línea: se anula la venta. */
+  sale: number | null;
+  /** Id del cambio que la generó, o `null`. */
+  exchange: number | null;
   /** Cantidad de variantes; 0 en un recuento sin diferencias. */
   lines_count: number;
   /** Unidades movidas: suma de los valores absolutos de las líneas. */

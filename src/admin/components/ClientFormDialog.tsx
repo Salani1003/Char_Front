@@ -85,15 +85,18 @@ const toFormValues = (client: Client): ClientFormValues => ({
  * @param open Si el modal está visible.
  * @param onOpenChange Se llama con el nuevo estado cuando se abre o cierra.
  * @param client Cliente a editar; si se omite, el modal crea uno nuevo.
+ * @param onCreated Solo en alta: recibe el cliente creado (ej. el punto de venta lo deja elegido).
  */
 export function ClientFormDialog({
   open,
   onOpenChange,
   client,
+  onCreated,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   client?: Client | null;
+  onCreated?: (client: Client) => void;
 }) {
   const isEdit = !!client;
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -130,8 +133,9 @@ export function ClientFormDialog({
         });
         toast.success("Cliente actualizado");
       } else {
-        await createClient(phone ? { ...base, phone } : base);
+        const created = await createClient(phone ? { ...base, phone } : base);
         toast.success("Cliente creado");
+        onCreated?.(created);
       }
       handleOpenChange(false);
     } catch (error) {

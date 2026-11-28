@@ -24,6 +24,10 @@ export interface GetStockOperationsParams {
   date_to?: string;
   /** Id de recuento: la operación que generó su confirmación. */
   stock_count?: number;
+  /** Id de venta: la operación (egreso) que generó. */
+  sale?: number;
+  /** Id de cambio: las operaciones (ingreso y egreso) que generó. */
+  exchange?: number;
 }
 
 /** Lista el historial (`GET /stock-operations/`, `stock.view_stockmovement`): una fila por operación. */

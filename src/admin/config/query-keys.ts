@@ -64,3 +64,21 @@ export const stockKeys = {
   /** Todos los saldos juntos (recuentos en borrador). */
   allLevels: () => ["stock", "all-levels"] as const,
 };
+
+/**
+ * Ventas y cambios. Una venta o un cambio mueve stock: sus mutaciones
+ * invalidan además `stockKeys.all` y `productVariantKeys.all` (saldo en la
+ * grilla). Una venta invalida los cambios (y viceversa): se anulan juntos.
+ */
+export const saleKeys = {
+  all: ["sales"] as const,
+  list: (params: object = {}) => ["sales", "list", params] as const,
+  detail: (id: number | null) => ["sales", "detail", id] as const,
+};
+
+export const exchangeKeys = {
+  all: ["exchanges"] as const,
+  list: (params: object = {}) => ["exchanges", "list", params] as const,
+  detail: (id: number | null) => ["exchanges", "detail", id] as const,
+  preview: (body: object) => ["exchanges", "preview", body] as const,
+};

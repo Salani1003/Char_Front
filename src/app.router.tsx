@@ -5,11 +5,16 @@ import {
   ClientsPage,
   DashboardPage,
   DesignSystemPage,
+  ExchangeNewPage,
+  ExchangePage,
   InventoryPage,
   LoginPage,
   ProductEditPage,
   ProductNewPage,
   ProductsPage,
+  SaleNewPage,
+  SalePage,
+  SalesPage,
   StockCountNewPage,
   StockCountPage,
   StockMovementNewPage,
@@ -159,6 +164,74 @@ export const appRouter = createBrowserRouter([
                     permission={PERMISSIONS.stock.movement.view}
                   >
                     <StockOperationPage />
+                  </RequirePermission>
+                ),
+              },
+            ],
+          },
+          {
+            path: "sales",
+            handle: {
+              crumb: navCrumb("/admin/sales"),
+            } satisfies AdminRouteHandle,
+            children: [
+              {
+                index: true,
+                element: (
+                  <RequirePermission permission={PERMISSIONS.sales.view}>
+                    <SalesPage />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: "new",
+                handle: {
+                  crumb: () => ({ label: "Nueva venta" }),
+                } satisfies AdminRouteHandle,
+                element: (
+                  <RequirePermission permission={PERMISSIONS.sales.add}>
+                    <RequirePermission permission={PERMISSIONS.sales.view}>
+                      <SaleNewPage />
+                    </RequirePermission>
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: ":id/exchange/new",
+                handle: {
+                  crumb: () => ({ label: "Nuevo cambio" }),
+                } satisfies AdminRouteHandle,
+                element: (
+                  <RequirePermission
+                    permission={PERMISSIONS.sales.exchange.add}
+                  >
+                    <RequirePermission permission={PERMISSIONS.sales.view}>
+                      <ExchangeNewPage />
+                    </RequirePermission>
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: "exchanges/:id",
+                handle: {
+                  crumb: () => ({ label: "Cambio" }),
+                } satisfies AdminRouteHandle,
+                element: (
+                  <RequirePermission
+                    permission={PERMISSIONS.sales.exchange.view}
+                  >
+                    <ExchangePage />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: ":id",
+                handle: {
+                  crumb: () => ({ label: "Venta" }),
+                } satisfies AdminRouteHandle,
+                element: (
+                  <RequirePermission permission={PERMISSIONS.sales.view}>
+                    <SalePage />
                   </RequirePermission>
                 ),
               },

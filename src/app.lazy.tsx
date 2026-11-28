@@ -67,6 +67,31 @@ export const StockOperationPage = lazy(() =>
     default: m.StockOperationPage,
   })),
 );
+export const SalesPage = lazy(() =>
+  import("./admin/pages/sales/SalesPage").then((m) => ({
+    default: m.SalesPage,
+  })),
+);
+export const ExchangeNewPage = lazy(() =>
+  import("./admin/pages/sales/ExchangeNewPage").then((m) => ({
+    default: m.ExchangeNewPage,
+  })),
+);
+export const ExchangePage = lazy(() =>
+  import("./admin/pages/sales/ExchangePage").then((m) => ({
+    default: m.ExchangePage,
+  })),
+);
+export const SaleNewPage = lazy(() =>
+  import("./admin/pages/sales/SaleNewPage").then((m) => ({
+    default: m.SaleNewPage,
+  })),
+);
+export const SalePage = lazy(() =>
+  import("./admin/pages/sales/SalePage").then((m) => ({
+    default: m.SalePage,
+  })),
+);
 export const DesignSystemPage = lazy(() =>
   import("./design-system/pages/DesignSystemPage").then((m) => ({
     default: m.DesignSystemPage,

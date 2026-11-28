@@ -45,6 +45,20 @@ export const PERMISSIONS = {
     movement: crud("stock", "stockmovement"),
     count: crud("stock", "stockcount"),
   },
+  /** Módulo de ventas y cambios. */
+  sales: {
+    view: "sales.view_sale",
+    add: "sales.add_sale",
+    void: "sales.void_sale",
+    /** Aplicar el descuento del 5 % / 10 % a una venta. */
+    applyDiscount: "sales.apply_discount",
+    exchange: {
+      view: "sales.view_exchange",
+      /** También habilita la vista previa. */
+      add: "sales.add_exchange",
+      void: "sales.void_exchange",
+    },
+  },
   groups: {
     view: "auth.view_group",
   },

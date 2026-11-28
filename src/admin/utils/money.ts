@@ -66,3 +66,40 @@ export function compareMoney(a: string, b: string): number {
   const diff = toCents(a) - toCents(b);
   return diff < 0n ? -1 : diff > 0n ? 1 : 0;
 }
+
+/**
+ * Resta dos decimales de la API (`"200.00" − "180.00"` → `"20.00"`) sin pasar
+ * por floats. Puede dar negativo (`"-60.00"`). Ambos deben ser decimales
+ * válidos con hasta 2 decimales.
+ */
+export function subtractMoney(a: string, b: string): string {
+  const toCents = (value: string) => {
+    const [integer, decimals = ""] = value.split(".");
+    return BigInt(integer + decimals.padEnd(2, "0").slice(0, 2));
+  };
+  const diff = toCents(a) - toCents(b);
+  const abs = diff < 0n ? -diff : diff;
+  const digits = abs.toString().padStart(3, "0");
+  return `${diff < 0n ? "-" : ""}${digits.slice(0, -2)}.${digits.slice(-2)}`;
+}
+
+/**
+ * Importe decimal de la API (`"90.50"`) en centavos enteros (`9050`). Solo para
+ * la **estimación visual** del carrito: los importes que cuentan los calcula el
+ * backend. Un texto inválido da `0`.
+ */
+export function moneyToCents(value: string): number {
+  const match = /^(-?)(\d+)(?:\.(\d*))?$/.exec(value.trim());
+  if (!match) return 0;
+  const cents =
+    Number(match[2]) * 100 +
+    Number((match[3] ?? "").padEnd(2, "0").slice(0, 2));
+  return match[1] ? -cents : cents;
+}
+
+/** Centavos enteros (`9050`) → decimal de la API (`"90.50"`). */
+export function centsToMoney(cents: number): string {
+  const abs = Math.abs(Math.round(cents));
+  const digits = String(abs).padStart(3, "0");
+  return `${cents < 0 ? "-" : ""}${digits.slice(0, -2)}.${digits.slice(-2)}`;
+}

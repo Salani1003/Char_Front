@@ -40,6 +40,7 @@ export const STOCK_REASON_OPTIONS = [
   ...MANUAL_REASONS.egreso.filter((reason) => reason.value !== "otro"),
   { value: "recuento", label: "Recuento" },
   { value: "anulacion", label: "Anulación" },
+  { value: "venta", label: "Venta" },
 ];
 
 /** Largo máximo de la nota de una operación. */

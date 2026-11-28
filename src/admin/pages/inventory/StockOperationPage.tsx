@@ -36,7 +36,8 @@ import { getHttpStatus } from "@/admin/utils/productImages";
  * historial; el texto del backend viene en inglés y no se muestra).
  *
  * "Anular línea" aparece con `stock.add_stockmovement` solo si la operación no
- * es un ajuste, la línea no es ya una anulación y no está anulada. Pide
+ * es un ajuste ni la generó una venta o un cambio (`sale`/`exchange`: esas se
+ * anulan desde Ventas), la línea no es ya una anulación y no está anulada. Pide
  * confirmación (`AlertDialog`); si el backend rechaza la anulación (ya
  * anulada, o ya no alcanza el saldo) muestra su mensaje dentro del mismo
  * diálogo. Al anular bien, el aviso ofrece "Ver anulación" (la anulación es
@@ -141,6 +142,9 @@ export function StockOperationPage() {
   const canReverse = (movement: StockMovement) =>
     can(PERMISSIONS.stock.movement.add) &&
     data.kind !== "ajuste" &&
+    // Las líneas de una venta o de un cambio se anulan desde la venta/cambio.
+    data.sale === null &&
+    data.exchange === null &&
     movement.reason !== "anulacion" &&
     movement.reversed_by === null;
 

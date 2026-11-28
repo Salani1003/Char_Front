@@ -3,6 +3,7 @@ import { PERMISSIONS } from "@/auth/lib/permissions";
 import {
   LayoutDashboard,
   Package,
+  ShoppingCart,
   Warehouse,
   UserCog,
   Users,
@@ -66,5 +67,13 @@ export const adminNavItems: AdminNavItem[] = [
     end: false,
     description: "Consultá el stock de cada variante y su estado.",
     permission: PERMISSIONS.stock.level.view,
+  },
+  {
+    to: "/admin/sales",
+    label: "Ventas",
+    icon: ShoppingCart,
+    end: false,
+    description: "Registrá ventas y cambios y consultá su historial.",
+    permission: PERMISSIONS.sales.view,
   },
 ];
